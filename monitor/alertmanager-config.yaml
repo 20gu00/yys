@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alert-config
+  namespace: kube-mon
+data:
+  config.yml: |-
+    global:
+      # 当alertmanager持续多长时间未接收到告警后标记告警状态为 resolved
+      resolve_timeout: 5m   #持续5m为收到告警信息告警状态变成resolvd，以解决
+      # 配置邮件发送信息
+      smtp_smarthost: 'smtp.163.com:25'   #用于发送电子邮件的邮局，465才是加密端口                                                                                                                                                                                                                                                                      
+      smtp_from: 'a3472189068@163.com'   #自己在邮局注册的邮箱账号
+      smtp_auth_username: 'a3472189068@163.com'   #邮件验证名，也是邮箱账号(用来验证发件账号的用户名和信息)
+      smtp_auth_password: 'BNPUEZNCXTHFWXYQ'   #邮箱账号授权码注意是授权码，区邮箱后台开启查看授权码
+      smtp_hello: '163.com'   #向smtp服务器标识的默认主机名
+      smtp_require_tls: false   #不用tls认证
+    # 所有报警信息进入后的根路由，用来设置报警的分发策略
+    route:
+      # 这里的标签列表是接收到报警信息后的重新分组标签，例如，接收到的报警信息里面有许多具有 cluster=A 和 alertname=LatncyHigh 这样的标签的报警信息将会批量被聚合到一个分组里面，但只有一种标签则一个标签一个分组，或者两个标签值不同的有多种的，又是另外一种分组情况，分组其实就是讲相同类型或相似类型的告警信息放到同一组李变，一般通过告警名来判断
+      group_by: ['alertname', 'cluster']   #这里最好也用来team这个组中的自定义标签调理会更清晰
+      # 当一个新的报警分组被创建后，需要等待至少 group_wait 时间来初始化通知，这种方式可以确保您能有足够的时间为同一分组来获取多个警报，然后一起触发这个报警信息。
+      group_wait: 30s
+
+      # 相同的group之间发送告警通知的时间间隔(这里测试下，频率设置较大)
+      group_interval: 30s
+
+      # 如果一个报警信息已经发送成功了，等待 repeat_interval 时间来重新发送他们，不同类型告警发送频率需要具体配置(上面的看看任意理解成只是生成了告警信息，这个是发送给用户)
+      repeat_interval: 1h
+
+      # 默认的receiver：如果一个报警没有被一个route匹配，则发送给默认的接收器
+      receiver: default
+
+      # 上面所有的属性都由所有子路由继承，并且可以在每个子路由上进行覆盖。
+      routes:
+      - receiver: email
+        group_wait: 10s
+        match:
+          team: node
+    receivers:
+    - name: 'default'
+      email_configs:   #接受者，这里也是邮箱，也可以是同一个邮箱账号，就比如alertmanager用上面的163账号登录邮局发件给自己即同样的163账号接收
+      #邮件流程：发件账号->邮局->收件人账号
+      #不论是代码操作授权码还是这里使用密码用户名，只要是发件就像以前那个年代，发件人得有邮局开的账号，用这个账号区邮局让邮局帮忙发件，所以发件得配置邮局，收件不用配置邮局
+      - to: '3472189068@qq.com'
+        send_resolved: true  # 接受告警恢复的通知
+    - name: 'email'
+      email_configs:
+      - to: '3472189068@qq.com'
+        send_resolved: true

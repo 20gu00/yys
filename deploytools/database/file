@@ -1,0 +1,23 @@
+对于mysql，后续打算做读写分离，所以建议使用阿里云的rds
+
+在node1 mkdir /data/mysql && chmod a+w /data/mysql
+
+kubectl create secret generic mysql-root-password --from-literal=password=100.Acjq -n gozero
+echo -n "MTAwLkFjanE=" | base64 -d
+test:kubectl run -it --rm --image=mysql:5.7 --rm --restart=Never mysql-client -- mysql -h mysql.gozero -p100.Acjq
+此命令在运行MySQL的集群中创建一个新的Pod，并连接到MySQL服务器。如果连接成功，则说明你的MySQL数据库已启动并正在运行。
+mysql redis建议放在istio外
+
+我们平时装的数据库其实含有了服务端和客户端，即数据库系统和数据库引擎(增删改查)
+
+去dbeaver官网下载rpm包
+yum localinstall dbeaver-ce-22.1.4-stable.x86_64.rpm && dbeaver
+使用dbeaver需要安装好mysql
+
+我这里用的数据库连接客户端是beekeeper studio的开源社区版
+
+mysql -uroot -h 192.168.23.144 -P 31234 -p
+
+这边由于只是单例，所以不用serviceentry了直接将数据库部署在istio中
+
+(微信收藏)

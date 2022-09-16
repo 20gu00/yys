@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mqjob-rpc
+  namespace: gozero
+  labels:
+    app: mqjob-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: mqjob-rpc
+  template:
+    metadata:
+      labels:
+        app: mqjob-rpc
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: mqjob-rpc
+        image: harbor.k8s.local/library/gotravel-mqjob-rpc:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3002
+        readinessProbe:
+          tcpSocket:
+            port: 3002
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 3002
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mqjob-rpc-svc
+  namespace: gozero
+spec:
+  ports:
+    - port: 3002
+  selector:
+    app: mqjob-rpc
+

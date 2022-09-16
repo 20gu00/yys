@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mqscheduler-rpc
+  namespace: gozero
+  labels:
+    app: mqscheduler-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: mqscheduler-rpc
+  template:
+    metadata:
+      labels:
+        app: mqscheduler-rpc
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: mqscheduler-rpc
+        image: harbor.k8s.local/library/gotravel-mqscheduler-rpc:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3003
+        readinessProbe:
+          tcpSocket:
+            port: 3003
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 3003
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mqscheduler-rpc-svc
+  namespace: gozero
+spec:
+  ports:
+    - port: 3003
+  selector:
+    app: mqscheduler-rpc

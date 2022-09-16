@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usercenter-rpc
+  namespace: gozero
+  labels:
+    app: usercenter-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: usercenter-rpc
+  template:
+    metadata:
+      labels:
+        app: usercenter-rpc
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: usercenter-rpc
+        image: harbor.k8s.local/library/gotravel-usercenter-rpc:v1
+        ports:
+        - containerPort: 2004
+        readinessProbe:
+          tcpSocket:
+            port: 2004
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 2004
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: usercenter-rpc-svc
+  namespace: gozero
+spec:
+  ports:
+    - port: 2004
+  selector:
+    app: usercenter-rpc
+

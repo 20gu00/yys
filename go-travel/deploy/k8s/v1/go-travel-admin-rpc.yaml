@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-rpc
+  namespace: gozero
+  labels:
+    app: admin-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: admin-rpc
+  template:
+    metadata:
+      labels:
+        app: admin-rpc
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: admin-rpc
+        image: harbor.k8s.local/library/gotravel-admin-rpc:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 1015
+        readinessProbe:
+          tcpSocket:
+            port: 1015
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 1015
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-rpc-svc
+  namespace: gozero
+spec:
+  ports:
+    - port: 1015
+  selector:
+    app: admin-rpc

@@ -1,0 +1,39 @@
+Name: order-api
+Host: 0.0.0.0
+Port: 1001
+Mode: dev
+
+#jwtAuth
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
+
+#监控
+Prometheus:
+  Host: 0.0.0.0
+  Port: 4001
+  Path: /metrics
+
+#rpc
+OrderRpcConf:
+#  Endpoints:
+#    - 127.0.0.1:2001
+  Target: k8s://gozero/order-rpc-svc:2001
+  NonBlock: true
+
+PaymentRpcConf:
+#  Endpoints:
+#    - 127.0.0.1:2002
+  Target: k8s://gozero/payment-rpc-svc:2002
+  NonBlock: true
+
+TravelRpcConf:
+#  Endpoints:
+#    - 127.0.0.1:2003
+  Target: k8s://gozero/travel-rpc-svc:2003
+  NonBlock: true
+
+Log:
+  ServiceName: order-api
+  Mode: console
+  Level: error
+  Encoding: json

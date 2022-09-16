@@ -1,0 +1,140 @@
+syntax = "v1"
+
+info(
+    title: "homestay order"
+    desc: "homestay order here"
+    author: "cjq"
+    email: "3472189068@qq.com"
+    version: "v1"
+)
+
+type(
+    AddOrderReq{
+        Id int64 `json:"id,optional"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DeleteTime string `json:"deletetime,optional"`
+        version int64 `json:"version,optional"`
+        DelState int64 `json:"delstate,optional"`
+        Sn string `json:"sn,optional"`
+        HomestayId int64 `json:"homwstayid,optional"`
+        UserId int64 `json:"userid,optional"`
+        Title string `json:"tile,optional"`
+        SubTitle string `json:"subtitle,optional"`
+        Cover string `json:"cover,optional"`
+        Info string `json:"info,optional"`
+        PeopleNum int64 `json:"peoplenum,optional"`
+        RowType int64 `json:"rowtype,optional"`
+        NeedFood  int64 `json:"needfood,optional"`
+        FoodInfo string `json:"foodinfo,optional"`
+        FoodPrice int64 `json:"foodprice,optional"`
+        HomestayPrice int64 `json:"homestayprice,optional"`
+        MarketHomestayPrice int64 `json:"markethomestayprice,optional"`
+        HomwstayBusinessId int64 `json:"homestaybusinessid,optional"`
+        HomestayUserId int64 `json:"homestayuserid,optional"`
+        LiveStartDate int64 `json:"livestartdate,optional"`
+        LiveEndDate int64  `json:"liveenddate,optional"`
+        LivePeopleNum int64 `json:"livepeoplenum,optional"`
+        TradeState int64 `json:"tradestate,optional"`
+        TradeCode string `json:"tradecode,optional"`
+        Remark string `json:"remark,optional"`
+        OrderTotalPrice int64 `json:"ordertotalprice,optional"`
+        FoodTotalPrice int64 `json:"foodtotalprice,optional"`
+        HomestayTotalPrice int64 `json:"homestaytotalprice,optional"`
+    }
+
+    AddOrderResp{
+        Pong int64 `json:"pong"`
+    }
+
+    UpdateOrderReq{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DeleteTime string `json:"deletetime,optional"`
+        version int64 `json:"version,optional"`
+        DelState int64 `json:"delstate,optional"`
+        Sn string `json:"sn,optional"`
+        HomestayId int64 `json:"homwstayid,optional"`
+        UserId int64 `json:"userid,optional"`
+        Title string `json:"tile,optional"`
+        SubTitle string `json:"subtitle,optional"`
+        Cover string `json:"cover,optional"`
+        Info string `json:"info,optional"`
+        PeopleNum int64 `json:"peoplenum,optional"`
+        RowType int64 `json:"rowtype,optional"`
+        NeedFood  int64 `json:"needfood,optional"`
+        FoodInfo string `json:"foodinfo,optional"`
+        FoodPrice int64 `json:"foodprice,optional"`
+        HomestayPrice int64 `json:"homestayprice,optional"`
+        MarketHomestayPrice int64 `json:"markethomestayprice,optional"`
+        HomwstayBusinessId int64 `json:"homestaybusinessid,optional"`
+        HomestayUserId int64 `json:"homestayuserid,optional"`
+        LiveStartDate int64 `json:"livestartdate,optional"`
+        LiveEndDate int64  `json:"liveenddate,optional"`
+        LivePeopleNum int64 `json:"livepeoplenum,optional"`
+        TradeState int64 `json:"tradestate,optional"`
+        TradeCode string `json:"tradecode,optional"`
+        Remark string `json:"remark,optional"`
+        OrderTotalPrice int64 `json:"ordertotalprice,optional"`
+        FoodTotalPrice int64 `json:"foodtotalprice,optional"`
+        HomestayTotalPrice int64 `json:"homestaytotalprice,optional"`
+    }
+
+    UpdateOrderResp{
+        Pong int64 `json:"pong"`
+    }
+
+    ListOrderReq{
+        //Info string `json:"info,default=%"`
+        Page int64 `json:"page,default=1"`
+        PageSize int64 `json:"pagesize,default=20"`
+    }
+
+    ListOrderItemResp{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime"`
+        UpdateTime string `json:"updatetime"`
+        DeleteTime string `json:"deletetime"`
+        version int64 `json:"version"`
+        DelState int64 `json:"delstate"`
+        Sn string `json:"sn"`
+        HomestayId int64 `json:"homwstayid"`
+        UserId int64 `json:"userid"`
+        Title string `json:"tile"`
+        SubTitle string `json:"subtitle"`
+        Cover string `json:"cover"`
+        Info string `json:"info"`
+        PeopleNum int64 `json:"peoplenum"`
+        RowType int64 `json:"rowtype"`
+        NeedFood  int64 `json:"needfood"`
+        FoodInfo string `json:"foodinfo"`
+        FoodPrice int64 `json:"foodprice"`
+        HomestayPrice int64 `json:"homestayprice"`
+        MarketHomestayPrice int64 `json:"markethomestayprice"`
+        HomwstayBusinessId int64 `json:"homestaybusinessid"`
+        HomestayUserId int64 `json:"homestayuserid"`
+        LiveStartDate int64 `json:"livestartdate"`
+        LiveEndDate int64  `json:"liveenddate"`
+        LivePeopleNum int64 `json:"livepeoplenum"`
+        TradeState int64 `json:"tradestate"`
+        TradeCode string `json:"tradecode"`
+        Remark string `json:"remark"`
+        OrderTotalPrice int64 `json:"ordertotalprice"`
+        FoodTotalPrice int64 `json:"foodtotalprice"`
+        HomestayTotalPrice int64 `json:"homestaytotalprice"`
+    }
+
+    ListOrderResp{
+        Total int64 `json:"total"`
+        Lisrt []ListOrderItemResp `json:"list"`
+    }
+
+    DeleteOrderReq{
+        Id int64 `json:"id"`
+    }
+
+    DeleteOrderResp{
+        Pong int64 `json:"pong"`
+    }
+)

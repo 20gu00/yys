@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-api
+  namespace: gozero
+  labels:
+    app: payment-api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: payment-api
+  template:
+    metadata:
+      labels:
+        app: payment-api
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: payment-api
+        image: harbor.k8s.local/library/gotravel-payment-api:v1
+        ports:
+        - containerPort: 1002
+        readinessProbe:
+          tcpSocket:
+            port: 1002
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 1002
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-api-svc
+  namespace: gozero
+spec:
+  ports:
+    - nodePort: 32103
+      port: 1002
+      protocol: TCP
+      targetPort: 1002
+  type: NodePort
+  selector:
+    app: payment-api
+

@@ -1,0 +1,40 @@
+syntax = "v1"
+
+info(
+    title: "payment"
+    desc: "payment here"
+    author: "cjq"
+    email: "3472189068@qq.com"
+    version: "v1"
+)
+type(
+    ListPaymentReq{
+        //Info string `json:"info,default=%"`
+        Page int64 `json:"page,default=1"`
+        PageSize int64 `json:"pagesize,default=20"`
+    }
+    ListPaymentItemResp{
+        Id int64 `json:"id"`
+        Sn string `json:"sn"`
+        CreateTime string `json:"createtime"`
+        UpdateTime string `json:"updatetime"`
+        DeleteTime string `json:"deletetime"`
+        DelState int64 `json:"delstate"`
+        Version int64 `json:"version"`
+        UserId int64 `json:"userid"`
+        PayMode string `json:"paymode"`
+        TradeType string  `json:"tradetype"`
+        TradeState string `json:"tradete"`
+        OrderSn string `json:"ordersn"`
+        ServiceType string `json:"servicetype"`
+        PayStatus string `json:"paystatus"`
+        Paytime string `json:"paytime"`
+    }
+
+    ListPaymentResp{
+        Total int64 `json:"total"`
+        List []ListPaymentItemResp `json:"list"`
+    }
+
+    //add update delete
+)

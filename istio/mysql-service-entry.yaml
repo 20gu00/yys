@@ -1,0 +1,14 @@
+# cnn-service-entry.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: mysql
+  namespace: gozero
+spec:
+  hosts:
+  - mysql.default.svc.cluster.local
+  ports:
+  - number: 3306
+    name: mysql
+    protocol: MySQl   #MySQL
+  resolution: DNS

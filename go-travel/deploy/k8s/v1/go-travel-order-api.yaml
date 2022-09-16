@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-api
+  namespace: gozero
+  labels:
+    app: order-api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: order-api
+  template:
+    metadata:
+      labels:
+        app: order-api
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: order-api
+        image: harbor.k8s.local/library/gotravel-order-api:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 1001
+        readinessProbe:
+          tcpSocket:
+            port: 1001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 1001
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-api-svc
+  namespace: gozero
+spec:
+  ports:
+    - nodePort: 32102
+      port: 1001
+      protocol: TCP
+      targetPort: 1001
+  type: NodePort
+  selector:
+    app: order-api
+

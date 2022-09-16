@@ -1,0 +1,33 @@
+Name: usercenter-api
+Host: 0.0.0.0
+Port: 1004
+Mode: dev
+
+#jwtAuth
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0 #the secret use to create token
+  #AccessExpire: 86400
+
+#WxMiniConf
+WxMiniConf:
+  AppId: wx2add729fadddddd
+  Secret: 20365395b3de9b2a9351ddddddd
+
+#rpc
+UsercenterRpcConf:
+#  Endpoints:
+#    - 127.0.0.1:2004
+  Target: k8s://gozero/usercenter-rpc-svc:2004
+  NonBlock: true
+
+#监控
+Prometheus:
+  Host: 0.0.0.0
+  Port: 4008
+  Path: /metrics
+
+Log:
+  ServiceName: usercenter-api
+  Mode: console
+  Level: error
+  Encoding: json

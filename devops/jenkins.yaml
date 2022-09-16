@@ -1,0 +1,185 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jenkins-pv
+spec:
+  storageClassName: local # Local PV
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  local:
+    path: /var/lib/k8s/jenkins
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pvc
+  namespace: kube-ops
+spec:
+  storageClassName: local
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  namespace: kube-ops
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: jenkins
+rules:
+  - apiGroups: ["extensions", "apps"]
+    resources: ["deployments", "ingresses"]
+    verbs: ["create", "delete", "get", "list", "watch", "patch", "update"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["create", "delete", "get", "list", "watch", "patch", "update"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/log", "events"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: jenkins
+  namespace: kube-ops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: jenkins
+subjects:
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: kube-ops
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: kube-ops
+spec:
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      serviceAccount: jenkins
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /var/jenkins_home"]
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: jenkinshome
+              mountPath: /var/jenkins_home
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:lts
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: JAVA_OPTS
+            value: -Dhudson.model.DownloadService.noSignatureCheck=true
+          ports:
+            - containerPort: 8080
+              name: web
+              protocol: TCP
+            - containerPort: 50000
+              name: agent
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1500m
+              memory: 2048Mi
+            requests:
+              cpu: 1500m
+              memory: 2048Mi
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            failureThreshold: 12
+          volumeMounts:
+            - name: jenkinshome
+              mountPath: /var/jenkins_home
+      volumes:
+        - name: jenkinshome
+          persistentVolumeClaim:
+            claimName: jenkins-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins
+  namespace: kube-ops
+  labels:
+    app: jenkins
+spec:
+  selector:
+    app: jenkins
+  ports:
+    - name: web
+      port: 8080
+      targetPort: web
+    - name: agent
+      port: 50000
+      targetPort: agent
+# ---
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   name: jenkins
+#   namespace: kube-ops
+# spec:
+#   rules:
+#   - host: jenkins.k8s.local
+#     http:
+#       paths:
+#       - backend:
+#           serviceName: jenkins
+#           servicePort: web
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jenkins
+  namespace: kube-ops
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`jenkins.k8s.local`)
+      services:
+        - name: jenkins
+          port: 8080

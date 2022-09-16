@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: kube-mon
+spec:
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      volumes:
+      - name: storage
+        hostPath:
+          path: /data/k8s/grafana/
+      nodeSelector:
+        kubernetes.io/hostname: node1   #固定在这个节点
+      securityContext:   #声明使用 root 用户运行
+        runAsUser: 0
+      containers:
+      - name: grafana
+        image: grafana/grafana:7.4.3
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          name: grafana
+        env:
+        - name: GF_SECURITY_ADMIN_USER   #grafana管理员的用户和密码
+          value: admin
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: admin321
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 30
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 150m
+            memory: 512Mi
+          requests:
+            cpu: 150m
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /var/lib/grafana   #grafana将dashboard和插件等的数据保存在这个目录下，有必要做个持久化
+          name: storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: kube-mon
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+  selector:
+    app: grafana
+

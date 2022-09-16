@@ -1,0 +1,509 @@
+------------------------postman test the program----------------------
+
+/*-----------------------provide to admin use----------------------------*/
+
+//------admin  homestay add
+//http://127.0.0.1:5005/admin/homestay_add
+//post
+{
+        "version":1,
+        "title":"浪琴湾",
+        "subtitle":"LOFT复式,北欧商务大床房,近万达广场",
+        "banner":"小橙公寓",
+        "info":"广东省江门市江海区又一居",
+        "peoplenum":10,
+        "homestaybusinessid":99,
+        "userid":100,
+        "rowstate":1,
+        "foodinfo":"满汉全席",
+        "foodprice":100,
+        "homestayprice":200,
+        "markethomestayprice":250
+}
+
+//--------admin homestay list
+//http://127.0.0.1:5005/admin/homestay_List
+//get
+//can all no input
+{
+        "info":"1",  //default %,default search by id
+        "page":1,
+        "pagesize":10
+}
+
+//--------admin homestay delete
+//http://127.0.0.1:5005/admin/homestay_delete
+//get
+{
+    "id":1,
+}
+//--------admin homestay update
+//http://127.0.0.1:5005/admin/homestay_update
+//get
+{
+        "id":1,
+        //"createyime": ,    //can no input
+        //"updatetime"  ,    //no input
+        //deltime ,          //no input
+        "version":1,
+        "title":"cheap",
+        "subtitle":"LOFT复式",
+        "banner":"小橙公寓",
+        "info":"广东省江门市江海区又一居",
+        "peoplenum":100,
+        "homestaybusinessid":999,
+        "userid":1000,
+        "rowstate":1,
+        "foodinfo":"满汉全席+kfc",
+        "foodprice":1009,
+        "homestayprice":2009,
+        "markethomestayprice":2509
+}
+
+
+//----------------admin homestayActivity add
+//http://127.0.0.1:5005/admin/homestayactivity_add
+//post
+{
+        //"id":1,
+
+        //CreateTime string `json:"createtime,optional"`
+        //UpdateTime string `json:"updatetime,optional"`
+        //DeleteTime string `json:"deletetime,optional"`
+
+        "version":1,
+
+        "delstate":0,       //sql can use delstate=0    0:down 1:up
+        "rowstatus":1,      //0:down 1:up
+        "rowtype":"情人节促销",
+        "dataid":1  //1:促销
+}
+
+//----------------admin homestayActivity delete
+//http://127.0.0.1:5005/admin/homestayactivity_delete
+//get
+{
+    "id":1
+}
+
+//----------------admin homestayActivity list
+//http://127.0.0.1:5005/admin/homestayactivity_list
+//get
+{
+        "info":"1",
+        "page":1,
+        "pagesize":10
+}
+
+//----------------admin homestayActivity update
+//http://127.0.0.1:5005/admin/homestayactivity_update
+//post
+{
+            "id":1,
+
+            //CreateTime string `json:"createtime,optional"`
+            //UpdateTime string `json:"updatetime,optional"`
+            //DeleteTime string `json:"deletetime,optional"`
+            version int64 `json:"version,optinal"`
+
+            "delstate":0,       //sql can use delstate=0    0:down 1:up
+            "rowstatus":1,      //0:down 1:up
+            "rowtype":"周年庆",
+            "dataid": 2 //2:促销
+}
+
+//--------------------homestay business add
+//http://127.0.0.1:5005/admin//homestaybusiness_add
+//post
+{
+            //"id":999,
+            //"createtime,optional"`
+            //UpdateTime string `json:"updatetime,optional"`
+            //DeleteTime string `json:"deletetime,optional"`
+           "version":1,
+            "delstate":0,
+            "title":"恒大泉都",
+            "userid":1,
+            "info":"豪华度假别墅",
+            "bossinfo":"人好说话",
+            "licensefron":"licensefron.png",  //osd
+            "licenseback":"lcenseback.png",
+            "rowstatus":1,
+            "start":5.0,
+            "tag":"good",
+            "cover":"cover.png",
+            "headimg":"headimg.png"
+}
+
+//--------------------homestay business list
+//http://127.0.0.1:5005/admin//homestaybusiness_list
+//get
+{
+           "info":"%",
+           "page":1,
+           "pagesize":10
+}
+
+//--------------------homestay business update
+//http://127.0.0.1:5005/admin//homestaybusiness_update
+//post
+{
+                "id":999,
+                //"createtime,optional"`
+                //UpdateTime string `json:"updatetime,optional"`
+                //DeleteTime string `json:"deletetime,optional"`
+                "version":1,
+                "delstate":0,
+                "title":"恒大泉都",
+                "userid":1,
+                "info":"豪华度假别墅",
+                "bossinfo":"人好说话,handson",
+                "licensefron":"licensefron2.png",  //osd
+                "licenseback":"lcenseback3.png",
+                "rowstatus":1,
+                "start":4.0,
+                "tag":"good",
+                "cover":"cover2.png",
+                "headimg":"headimg2.png"
+}
+//--------------------homestay business delete
+//http://127.0.0.1:5005/admin//homestaybusiness_update
+//get
+{
+    "id":1,
+}
+
+//--------------------homestay comment add
+{
+            "id":1,
+
+            //CreateTime string `json:"createtime,optional"`
+            //UpdateTime string `json:"updatetime,optional"`
+            //DeleteTime string `json:"deletetime,optional"`
+
+            "version":1,
+            "delstate":o,
+            "homwstayid":999,
+            "userid":1,
+            "start":"good",
+            "content":"very good,i love it"
+}
+
+//--------------------homestay comment update
+{
+            "id":1,
+
+            //CreateTime string `json:"createtime,optional"`
+            //UpdateTime string `json:"updatetime,optional"`
+            //DeleteTime string `json:"deletetime,optional"`
+
+            "version":2,
+            "delstate":o,
+            "homwstayid":999,
+            "userid":1,
+            "start":"good",
+            "content":"very good,i love it"
+}
+
+//--------------------homestay comment list
+{
+            "info":"%",
+           "page":1,
+           "pagesize":10
+}
+
+//--------------------homestay comment delete
+{
+    "id":1
+}
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjIyNTk3ODQsImlhdCI6MTY2MjE3MzM4NCwidXNlcklkIjoxfQ.yT4rHAxYGFQN8un8N9I1kj8AUaznQVr7tazwpNDnPB4
+//-------------------manager login
+//post
+//http://127.0.0.1:5005/admin_login/login
+{
+        "UserName":"admin",
+        "Password":"123456"  //passwd
+}
+
+
+//-------------------manager get manager info
+//get
+//http://127.0.0.1:5005/admin/manager_info
+//postman sent token no newline
+
+
+//-------------------manager change password
+//post
+//http://127.0.0.1:5005/admin/manager_pwd
+//123456 admin passwd
+//need login again and del cache
+{
+            "id":1,
+            "password":"passwd"
+}
+
+//-------------------manager list user
+//http://127.0.0.1:5005/admin/user_list
+//get
+{
+       // "info":"%",  //mobile
+        "page":1,
+        "pagesize":10
+}
+
+
+//-------------------manager delete user
+//http://127.0.0.1:5005/admin/user_delete
+//get
+{
+    "id":4
+}
+
+//-------------------order add
+//http://127.0.0.1:5005/admin/order_add
+//post
+{
+        //"id":1,   //not need
+
+        //CreateTime string `json:"createtime,optional"`
+        //UpdateTime string `json:"updatetime,optional"`
+        //DeleteTime string `json:"deletetime,optional"`
+
+        "version":1,
+        "delstate":0,
+        "sn":"991100778899",
+        "homwstayid":999,
+        "userid":1,
+        "tile":"海景房下单",
+        "subtitle":"good",
+        "cover":"cover.png",
+        "info":"海景房"
+        "peoplenum":10,
+        "rowtype":0,
+        "needfood":1,
+        "foodinfo":"满汉全席",
+        "foodprice":100,
+        "homestayprice":200,
+        "markethomestayprice":250,
+        "homestaybusinessid":999
+        "homestayuserid":1,
+
+        //LiveStartDate string `json:"livestartdate,optional"`
+        //LiveEndDate string  `json:"liveenddate,optional"`
+
+        "livepeoplenum":10,
+        "tradestate":0,
+        "tradecode":"999",
+        "remark":"gogogo",
+        "ordertotalprice":300,
+        "foodtotalprice":100,
+        "homestaytotalprice":500
+}
+
+//-------------------order update
+//http://127.0.0.1:5005/admin/order_update
+//post
+{
+    "id":1,
+
+            //CreateTime string `json:"createtime,optional"`
+            //UpdateTime string `json:"updatetime,optional"`
+            //DeleteTime string `json:"deletetime,optional"`
+
+            "version":2,
+            "delstate":0,
+            "sn":"991100778899",
+            "homwstayid":999,
+            "userid":1,
+            "tile":"海景房下单",
+            "subtitle":"good",
+            "cover":"cover.png",
+            "info":"海景房"
+            "peoplenum":10,
+            "rowtype":0,
+            "needfood":1,
+            "foodinfo":"满汉全席",
+            "foodprice":100,
+            "homestayprice":200,
+            "markethomestayprice":250,
+            "homestaybusinessid":999
+            "homestayuserid":1,
+
+            //LiveStartDate string `json:"livestartdate,optional"`
+            //LiveEndDate string  `json:"liveenddate,optional"`
+
+            "livepeoplenum":10,
+            "tradestate":0,
+            "tradecode":"999",
+            "remark":"gogogo",
+            "ordertotalprice":300,
+            "foodtotalprice":100,
+            "homestaytotalprice":500,
+}
+
+//-------------------order list
+//http://127.0.0.1:5005/admin/order_list
+//get
+{
+        "info":"%",
+        "page":1,
+        "pagesize":10
+}
+
+//-------------------order delete
+//http://127.0.0.1:5005/admin/order_delete
+//get
+{
+    "id":1
+}
+
+//-------------------payment list
+//http://127.0.0.1:5005/admin/payment_list
+//get
+{
+            "info":"%",
+            "page":1,
+            "pagesize":10
+}
+
+
+/*-----------------------------------provide to admin use---------------------------------*/
+
+
+/*------------------------------------provide to travel app use-------------*/
+
+//----------------homestay order create
+//http://127.0.0.1:1001/order/v1/homestayOrder/createHomestayOrder
+//post
+{
+        "homestayId":2,
+		"isFood":true,
+		"liveStartTime":86400,
+		"liveEndTime":259200,
+		"livePeopleNum":10,
+		"remark":"gogogo"
+}
+
+//----------------homestay order list
+//http://127.0.0.1:1001/order/v1/homestayOrder/userHomestayOrderList
+//post
+{
+        "lastId":1,
+		"pageSize":10,
+		"tradeState":0
+}
+
+//----------------homestay order detail
+//http://127.0.0.1:1001/order/v1/homestayOrder/userHomestayOrderDetail
+//post
+{
+    "sn":"HSO2022090515521418035922"
+}
+
+//----------------homestay order list
+{
+    "sn":"999"
+}
+
+//----------------homestay payment list
+{
+       "orderSn":"999",
+		"serviceType":"payment"
+}
+
+
+//----------------homestay payment back
+{
+
+}
+
+
+//---------------------business list(lastId)
+{
+            "lastId":1,
+    		"pageSize":10,
+    		"homestayBusinessId":999
+}
+
+//----------------------homestay list
+{
+        "page":1,
+		"pageSize":20
+}
+
+//guess list
+{
+
+}
+
+//homestay detail
+{
+    "Id":1
+}
+
+//good boss list
+{
+
+}
+
+//HomestayBussiness List
+{
+    "lastId":1,
+    "pageSize":10
+}
+
+//HomestayBussiness Detail
+{
+    "Id":1,
+}
+
+
+//-------------------------Register
+//http://127.0.0.1:1004/usercenter/v1/user/register
+//post
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTM4OTQ1NjgsImlhdCI6MTY2MjM1ODU2OCwiand0VXNlcklkIjo1fQ.mmwg9kFXuI4MlKgScG684r_A12X5BKIuQHVgHgrW18A
+{
+        "mobile":"13019991099", //not too long
+        "password":"passwd"
+}
+//--------------------------Login
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTM4OTQ2NTEsImlhdCI6MTY2MjM1ODY1MSwiand0VXNlcklkIjo1fQ.eesSMf7sQVbdXlRzOHdPcrBcp_MXOAhHCqHsJO_gcwg
+//http://127.0.0.1:1004/usercenter/v1/user/login
+//post
+{
+         "mobile":"13018397889",
+          "password":"passwd"
+}
+
+//------------------------userInfo(detail)
+//use the login token
+//http://127.0.0.1:1004/usercenter/v1/user/detail
+//post
+{
+
+}
+//response example:
+{
+    "userInfo": {
+        "id": 5,
+        "mobile": "13019991099",
+        "nickname": "P5eqw8Y9",
+        "sex": 0,
+        "avatar": "",
+        "info": ""
+    }
+}
+
+
+//--------------------------------------WXMiniAuth
+//err
+//http://127.0.0.1:1004/usercenter/v1/user/wxMiniAuth
+//post
+{
+        "code":"999",
+        "iv":"123",
+        "encryptedData":"anehqjkdsjhflklkhkjfdjlk"
+}
+
+/*------------------------------------provide to travel app use-------------*/

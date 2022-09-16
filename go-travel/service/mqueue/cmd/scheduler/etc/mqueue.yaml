@@ -1,0 +1,16 @@
+Name: mqueue-scheduler
+Host: 0.0.0.0
+Port: 3003
+Mode: dev
+
+#监控
+Prometheus:
+  Host: 0.0.0.0
+  Port: 4011
+  Path: /metrics
+
+Redis:
+  Host: redis:6379
+  Pass:
+#  Type: node
+#  Pass: G62m50oigInC30sf

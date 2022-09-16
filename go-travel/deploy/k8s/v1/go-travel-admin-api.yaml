@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-api
+  namespace: gozero
+  labels:
+    app: admin-api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: admin-api
+  template:
+    metadata:
+      labels:
+        app: admin-api
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: admin-api
+        image: harbor.k8s.local/library/gotravel-admin-api:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5005
+        readinessProbe:
+          tcpSocket:
+            port: 5005
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 5005
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-api-svc
+  namespace: gozero
+spec:
+  ports:
+    - nodePort: 32101
+      port: 5005
+      protocol: TCP
+      targetPort: 5005
+  type: NodePort
+  selector:
+    app: admin-api
+

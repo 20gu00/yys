@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: kube-mon
+  labels:
+    app: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      serviceAccountName: prometheus
+      initContainers:   #初始化容器
+      - name: fix-permissions
+        image: busybox
+        command: [chown, -R, "nobody:nobody", /prometheus]   #初始化容器完成操作就退出，这里的操作是更改挂载卷的目录的属性，操作带来的变化会留在卷中。这里的这个卷用的是localpv类型，使用的是主机的path目录，会修改这个目录的权限
+        volumeMounts:   #挂载volume
+        - name: data
+          mountPath: /prometheus   #挂载在初始化容器这个路径下
+      containers:
+      - image: prom/prometheus:v2.24.1
+        name: prometheus
+        args:
+        - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--storage.tsdb.path=/prometheus"  # 指定tsdb数据路径
+        - "--storage.tsdb.retention.time=24h"
+        - "--web.enable-admin-api"  # 控制对admin HTTP API的访问，其中包括删除时间序列等功能
+        - "--web.enable-lifecycle"  # 支持热更新，直接执行localhost:9090/-/reload立即生效
+        ports:
+        - containerPort: 9090
+          name: http
+        volumeMounts:
+        - mountPath: "/etc/prometheus"   #prometheus思维配置文件一般都是放在这个路径下
+          name: config-volume
+        - mountPath: "/prometheus"   #prometheus存放数据的路径
+          name: data
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: 100m
+            memory: 512Mi
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: prometheus-data
+      - configMap:   #cm类型的volume
+          name: prometheus-config
+        name: config-volume
+

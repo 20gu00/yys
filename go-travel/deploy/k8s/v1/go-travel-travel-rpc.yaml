@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travel-rpc
+  namespace: gozero
+  labels:
+    app: travel-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: travel-rpc
+  template:
+    metadata:
+      labels:
+        app: travel-rpc
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: travel-rpc
+        image: harbor.k8s.local/library/gotravel-travel-rpc:v1
+        ports:
+        - containerPort: 2003
+        readinessProbe:
+          tcpSocket:
+            port: 2003
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 2003
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: travel-rpc-svc
+  namespace: gozero
+spec:
+  ports:
+    - port: 2003
+  selector:
+    app: travel-rpc
+

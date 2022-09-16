@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package managerpb;   //pb and usercent conflict
+
+option go_package = "./pb";
+
+message LoginReq {
+  string UserName = 1;
+  string Password = 2;
+}
+
+message LoginResp {
+  int64 Id=1;
+  string UserName=2;
+  string Salt=3;
+  string Token=4;
+  int64 AccessExpire=5;
+  int64 UserId=6;
+}
+
+message UserInfoReq {
+  string UserName = 1;
+  int64 Id=2;
+}
+
+message UserInfoResp {
+  int64 Id=1;
+  string UserName = 3;
+  string Introduction = 4;
+  int64 UserId=5;
+}
+
+message ChangePwdReq {
+  int64  Id = 1;
+  string  Password = 2;
+}
+
+message ChangePwdResp {
+  int64 Pong = 1;
+}
+
+service admin {
+  rpc AdminLogin(LoginReq) returns (LoginResp);
+  rpc AdminInfo(UserInfoReq) returns (UserInfoResp);
+  rpc ChangePwd(ChangePwdReq) returns (ChangePwdResp);
+}

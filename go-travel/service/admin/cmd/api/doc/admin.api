@@ -1,0 +1,158 @@
+syntax = "v1"
+
+info(
+	desc: "管理员"
+	author: "cjq"
+	email: "3472189068@qq.com"
+)
+
+import "manager/manager.api"
+import "homestay/homestay.api"
+import "payment/payment.api"
+import "order/order.api"
+
+//login
+@server(
+	//jwt: Auth   //登录注册退出一般不用jwt，功能是鉴权，含token
+	group: manager
+	prefix: /admin_login
+)
+service admin-api {
+	
+	@doc "admin login"
+	@handler AdminLogin
+	post /login (LoginReq) returns (LoginResp)
+}
+
+//manager
+@server(
+	jwt: Auth
+	prefix: admin  // /admin
+	group: manager
+)
+service admin-api {
+	@doc "admin info"
+	@handler ManagerInfo
+	get /manager_info () returns (UserInfoResp)
+	
+	@doc "change password"
+	@handler ChangePwd
+	post /manager_pwd (ChangePwdReq) returns (ChangePwdResp)
+	
+	@doc "user list"
+	@handler UserList
+	get /user_list (ListUserReq) returns (ListUserResp)
+	
+	@doc "user delete"
+	@handler UserDelete
+	get /user_delete (DeleteUserReq) returns (DeleteUserResp)
+}
+
+//homestay
+@server(
+	jwt: Auth
+	prefix: admin
+	group: homestay
+)
+service admin-api {
+	@doc "homestay add"
+	@handler HomestayAdd
+	post /homestay_add (AddHomestayReq) returns (AddHomestayResp)
+	
+	@doc "homestay delete"
+	@handler HomestayDelete
+	get /homestay_delete (DeleteHomestayReq) returns (DeleteHomestayResp)
+	
+	@doc "homestay list"
+	@handler HomestayList
+	get /homestay_List (ListHomestayReq) returns (ListHomestayResp)
+	
+	@doc "homestay update"
+	@handler HomestayUpdate
+	post /homestay_update(UpdateHomestayReq) returns (UpdateHomestayResp)
+	
+	@doc "homestayactivity add"
+	@handler HomestayActivityAdd
+	post /homestayactivity_add(AddHomestayActivityReq) returns (AddHomestayActivityResp)
+	
+	@doc "homestayactivity delete"
+	@handler HomestayActivityDelte
+	get /homestayactivity_delete(DeleteHomestayActivityReq) returns (DeleteHomestayActivityResp)
+	
+	@doc "homestayactivity list"
+	@handler HomestayActivityList
+	get /homestayactivity_list(ListHomestayActivityReq) returns (ListHomestayActivityResp)
+	
+	@doc "homestayactivity update"
+	@handler HomestayActivityUpdate
+	post /homestayactivity_update(UpdateHomestayActivityReq) returns (UpdateHomestayActivityResp)
+	
+	@doc "homestaybusiness add "
+	@handler HomestayBusinessAdd
+	post /homestaybusiness_add(AddHomestayBusinessReq) returns (AddHomestayBusinessResp)
+	
+	@doc "homestaybusiness delete "
+	@handler HomestayBusinessDelete
+	get /homestaybusiness_delete(DeleteHomestayBusinessReq) returns (DeleteHomestayBusinessResp)
+	
+	@doc "homestaybusiness Update "
+	@handler HomestayBusinessUpdate
+	post /homestaybusiness_update(UpdateHomestayBusinessReq) returns (UpdateHomestayBusinessResp)
+	
+	@doc "homestaybusiness list "
+	@handler HomestayBusinessList
+	get /homestaybusiness_list(ListHomestayBusinessReq) returns (ListHomestayBusinessResp)
+	
+	@doc "homestaycomment add "
+	@handler HomestaycommentAdd
+	post /homestaycomment_add(AddHomestaycommentReq) returns (AddHomestaycommentResp)
+	
+	@doc "homestaycomment delete "
+	@handler HomestaycommentDelete
+	get /homestaycomment_delete(DeleteHomestaycommentReq) returns (DeleteHomestaycommentResp)
+	
+	@doc "homestaycomment list "
+	@handler HomestaycommentList
+	get /homestaycomment_list(ListHomestaycommentReq) returns (ListHomestaycommentResp)
+	
+	@doc "homestaycomment update "
+	@handler HomestaycommentUpdate
+	post /homestaycomment_update(UpdateHomestaycommentReq) returns (UpdateHomestaycommentResp)
+	
+}
+
+//payment
+@server(
+	jwt: Auth
+	prefix: admin  // /admin
+	group: payment
+)
+service admin-api{
+	@doc "payment list"
+	@handler PaymentList
+	get /payment_list (ListPaymentReq) returns (ListPaymentResp)
+}
+
+//order
+@server(
+	jwt: Auth
+	prefix: admin  // /admin
+	group: order
+)
+service admin-api{
+	@doc "Order add"
+	@handler OrderAdd
+	post /order_add (AddOrderReq) returns (AddOrderResp)
+	
+	@doc "Order delete"
+	@handler OrderDelete
+	get /order_delete (DeleteOrderReq) returns (DeleteOrderResp)
+	
+	@doc "Order list"
+	@handler OrderList
+	get /order_list (ListOrderReq) returns (ListOrderResp)
+	
+	@doc "Order update"
+	@handler OrderUpdate
+	post /order_update (UpdateOrderReq) returns (UpdateOrderResp)
+}

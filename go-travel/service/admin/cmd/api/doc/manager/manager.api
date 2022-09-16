@@ -1,0 +1,70 @@
+syntax = "v1"
+
+info(
+    desc: "管理员相关 admin(manager) and user"
+    author: "cjq"
+    email: "3472189068@qq.com"
+)
+
+type (
+//manager
+    LoginReq {
+        UserName string `json:"UserName"`
+        Password string `json:"Password"`
+    }
+            // LoginResp strustr{}
+    LoginResp {
+        AccessToken  string `json:"accessToken"`
+        AccessExpire int64  `json:"accessExpire"`
+    }
+
+    UserInfoResp {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Introduction string   `json:"introduction"`
+        UserId int64 `json:"userid"`
+    }
+
+    ChangePwdReq {
+        Id       int64  `json:"id"`
+        Password string `json:"password"`
+    }
+
+    ChangePwdResp {
+        Pong int64 `json:"pong"`
+    }
+//looklook_usercenter user
+    ListUserReq{
+       // Info string `json:"info,default=%"`  //mobile
+        Page int64 `json:"page,default=1"`
+        PageSize int64 `json:"pagesize,default=20"`
+    }
+    ListUserItemResp{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime"`
+        UpdateTime string `json:"updatetime"`
+        DeleteTime string `json:"deletetime"`
+        DelState int64 `json:"delstate"`
+        Version int64 `json:"version"`
+        Mobile string   `json:"mobile"`
+        Password string `json:"password"`
+        NickName string `json:"nickname"`
+        Sex int64 `json:"sex"`
+        avatar string `json:"avatar"`
+        Info string `json:"info"`
+    }
+
+    ListUserResp{
+        Total int64 `json:"total"`
+        List []ListUserItemResp `json:"list"`
+    }
+
+    DeleteUserReq{
+        Id int64 `json:"id"`
+    }
+
+    DeleteUserResp{
+        Pong int64 `json:"pong"`
+    }
+
+)

@@ -1,0 +1,245 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+
+//req 、resp
+
+
+message HomestayOrder {
+  int64  id = 1;
+  string sn = 2;
+  int64  userId = 3;
+  int64  homestayId = 4;
+  string title = 5;
+  string subTitle = 6;
+  string cover = 7;
+  string info = 8;
+  int64 peopleNum = 9;
+  int64 rowType = 10;
+  string foodInfo = 11;
+  int64 foodPrice = 12;
+  int64 homestayPrice = 13;
+  int64 marketHomestayPrice = 14;
+  int64 homestayBusinessId = 15;
+  int64 homestayUserId = 16;
+  int64 liveStartDate = 17;
+  int64 liveEndDate = 18;
+  int64 livePeopleNum = 19;
+  int64 tradeState = 20;
+  string tradeCode = 21;
+  string remark = 22;
+  int64 orderTotalPrice = 23;
+  int64 foodTotalPrice = 24;
+  int64 homestayTotalPrice = 25;
+  int64 createTime = 26;
+  int64 needFood = 27;
+  int64 version=28;
+  int64 delState=29;
+  int64 updateTime = 30;
+  int64 deleteTime = 31;
+}
+
+message CreateHomestayOrderReq {
+  int64  homestayId = 1;
+	bool   isFood = 2;
+	int64  liveStartTime = 3;
+	int64  liveEndTime = 4;
+  int64  userId = 5;
+  int64  livePeopleNum = 6;
+  string remark = 7;
+}
+message CreateHomestayOrderResp {
+  string sn = 1;
+}
+
+
+message  HomestayOrderDetailReq{
+  string sn = 1;
+}
+message  HomestayOrderDetailResp{
+  HomestayOrder homestayOrder= 1;
+}
+
+message  UpdateHomestayOrderTradeStateReq{
+  string sn = 1;
+  int64  tradeState = 2;  //-1: 已取消 0:待支付 1:未使用 2:已使用  3:已过关闭
+}
+message  UpdateHomestayOrderTradeStateResp{
+  int64  id = 1;
+  int64  userId = 2;
+  string sn = 3;
+  string tradeCode = 4;
+  int64  liveStartDate = 5;
+  int64  liveEndDate = 6;
+  int64  orderTotalPrice = 7;
+  string title = 8;
+}
+
+
+message UserHomestayOrderListReq {
+  int64           lastId = 1;
+  int64           pageSize = 2;
+  int64           userId = 3;
+  int64           traderState = 4;
+}
+message UserHomestayOrderListResp {
+  repeated HomestayOrder list = 1;
+}
+
+
+//provide to admin use
+message AddOrderReq{
+  int64 Id=1 ;
+  string CreateTime =2;
+  string UpdateTime=3 ;
+  string DeleteTime =4;
+  int64 version =5;
+  int64 DelState =6;
+  string Sn =7;
+  int64 HomestayId=8;
+  int64 UserId=9;
+  string Title =10;
+  string SubTitle =11;
+  string Cover=12;
+  string Info =13;
+  int64 PeopleNum=14 ;
+  int64 RowType =15;
+  int64 NeedFood =16 ;
+  string FoodInfo=17 ;
+  int64 FoodPrice=18 ;
+  int64 HomestayPrice=19 ;
+  int64 MarketHomestayPrice=20 ;
+  int64 HomwstayBusinessId=21 ;
+  int64 HomestayUserId=22 ;
+  int64 LiveStartDate=23;
+  int64 LiveEndDate=24 ;
+  int64 LivePeopleNum =25;
+  int64 TradeState=26 ;
+  string TradeCode =27;
+  string Remark=28 ;
+  int64 OrderTotalPrice=29 ;
+  int64 FoodTotalPrice=30;
+  int64 HomestayTotalPrice=31 ;
+}
+
+message AddOrderResp{
+  int64 Pong=1;
+}
+
+message DeleteOrderReq{
+  int64 Id=1;
+}
+
+message DeleteOrderResp{
+  int64 Pong=1;
+}
+
+message  ListOrderReq{
+  string Info=1;
+  int64  Page=2;
+  int64  PageSize =3;
+}
+
+message ListOrderItemResp{
+  int64 Id=1;
+  string CreateTime =2;
+  string UpdateTime =3;
+  string DeleteTime =4;
+  int64 version=5;
+  int64 DelState =6;
+  string Sn=7;
+  int64 HomestayId=8;
+  int64 UserId=9;
+  string Title=10;
+  string SubTitle =11;
+  string Cover =12;
+  string Info=13;
+  int64 PeopleNum =14;
+  int64 RowType=15;
+  int64 NeedFood=16;
+  string FoodInfo=17;
+  int64 FoodPrice=18;
+  int64 HomestayPrice=19;
+  int64 MarketHomestayPrice=20;
+  int64 HomwstayBusinessId=21;
+  int64 HomestayUserId=22;
+  int64 LiveStartDate=23;
+  int64 LiveEndDate=24;
+  int64 LivePeopleNum=25;
+  int64 TradeState=26;
+  string TradeCode=27;
+  string Remark=28;
+  int64 OrderTotalPrice=29;
+  int64 FoodTotalPrice=30;
+  int64 HomestayTotalPrice=31;
+}
+
+message ListOrderResp{
+    int64 Total=1;
+    repeated  ListOrderItemResp List=2;
+}
+
+message UpdateOrderReq{
+  int64 Id=1;
+  string CreateTime =2;
+  string UpdateTime =3;
+  string DeleteTime =4;
+  int64 version=5;
+  int64 DelState =6;
+  string Sn=7;
+  int64 HomestayId=8;
+  int64 UserId=9;
+  string Title=10;
+  string SubTitle =11;
+  string Cover =12;
+  string Info=13;
+  int64 PeopleNum =14;
+  int64 RowType=15;
+  int64 NeedFood=16;
+  string FoodInfo=17;
+  int64 FoodPrice=18;
+  int64 HomestayPrice=19;
+  int64 MarketHomestayPrice=20;
+  int64 HomwstayBusinessId=21;
+  int64 HomestayUserId=22;
+  int64 LiveStartDate=23;
+  int64 LiveEndDate=24;
+  int64 LivePeopleNum=25;
+  int64 TradeState=26;
+  string TradeCode=27;
+  string Remark=28;
+  int64 OrderTotalPrice=29;
+  int64 FoodTotalPrice=30;
+  int64 HomestayTotalPrice=31;
+}
+
+message UpdateOrderResp{
+  int64 Pong=1;
+}
+
+//service
+service order {
+    //民宿下订单
+    rpc createHomestayOrder(CreateHomestayOrderReq)returns(CreateHomestayOrderResp);
+
+    //民宿订单详情
+    rpc homestayOrderDetail(HomestayOrderDetailReq)returns(HomestayOrderDetailResp);
+
+    //更新民宿订单状态
+    rpc updateHomestayOrderTradeState(UpdateHomestayOrderTradeStateReq)returns(UpdateHomestayOrderTradeStateResp);
+
+    //用户民宿订单
+    rpc userHomestayOrderList(UserHomestayOrderListReq)returns(UserHomestayOrderListResp);
+
+    //provide to admin use
+    rpc addOrder(AddOrderReq) returns (AddOrderResp);
+
+    rpc deleteOrder(DeleteOrderReq) returns (DeleteOrderResp);
+
+    rpc listOrder(ListOrderReq) returns (ListOrderResp);
+
+    rpc updateOrder(UpdateOrderReq) returns (UpdateOrderResp);
+}

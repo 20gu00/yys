@@ -1,0 +1,318 @@
+syntax = "v1"
+
+info(
+    title: "homestay"
+    desc: "homestay here"
+    author: "cjq"
+    email: "3472189068@qq.com"
+    version: "v1"
+)
+type (
+    //gotravel_travel homestay
+    AddHomestayReq{
+        Id int64 `json:"id,optional"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DelTime string `json:"deltime,optional"`
+        version int64 `json:"version,optinal"`
+        Title string `json:"title"`
+        SubTitle string `json:"subtitle"`
+        Banner string `json:"banner"`
+        Info string `json:"info"`
+        PeopleNum int64 `json:"peoplenum,optional"`
+        HomestayBusinessId int64 `json:"homestaybusinessid,optional"`
+        UserId int64 `json:"userid,optional"`
+        RowState int64 `json:"rowstate,default=1"`
+        FoodInfo string `json:"foodinfo,optional"`
+        FoodPrice int64 `json:"foodprice,optional"`
+        HomestayPrice int64 `json:"homestayprice,optional"`
+        MarketHomestayPrice int64 `json:"markethomestayprice,optional"`   //insert use optional
+    }
+
+    AddHomestayResp{
+        Pong int64 `json:"pong""`
+    }
+
+    ListHomestayReq{
+        //Info string `json:"info,default=%"`
+        Page int64 `json:"page,default=1"`
+        PageSize int64 `json:"pagesize,default=20"`
+    }
+
+    ListHomestayItemResp{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime"`
+        UpdateTime string `json:"updatetime"`
+        DelTime string `json:"deltime"`
+        version int64 `json:"version"`
+        Title string `json:"tile"`
+        SubTitle string `json:"subtitle"`
+        Banner string `json:"banner"`
+        Info string `json:"info"`
+        PeopleNum int64 `json:"peoplenum"`
+        HomestayBusinessId int64 `json:"homestaybusinessid"`
+        UserId int64 `json:"userid"`
+        RowState int64 `json:"rowstate"`
+        FoodInfo string `json:"foodinfo"`
+        FoodPrice int64 `json:"foodprice"`
+        HomestayPrice int64 `json:"homestayprice"`
+        MarketHomestayPrice int64 `json:"markethomestayprice"`
+    }
+
+    ListHomestayResp{
+        Total int64 `json:"total"`
+        List []ListHomestayItemResp `json:"list"`
+    }
+
+    DeleteHomestayReq{
+        Id int64 `json:"id"`
+    }
+
+    DeleteHomestayResp{
+        Pong int64 `json:"pong"`
+    }
+
+    UpdateHomestayReq{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DelTime string `json:"deltime,optional"`
+        version int64 `json:"version,optinal"`
+        Title string `json:"tile"`
+        SubTitle string `json:"subtitle"`
+        Banner string `json:"banner"`
+        Info string `json:"info"`
+        PeopleNum int64 `json:"peoplenum,optional"`
+        HomestayBusinessId int64 `json:"homestaybusinessid,optional"`
+        UserId int64 `json:"userid,optional"`
+        RowState int64 `json:"rowstate,optional"`
+        FoodInfo string `json:"foodinfo,optional"`
+        FoodPrice int64 `json:"foodprice,optional"`
+        HomestayPrice int64 `json:"homestayprice,optional"`
+        MarketHomestayPrice int64 `json:"markethomestayprice,optional"`   //insert use optional
+    }
+
+    UpdateHomestayResp{
+        Pong int64 `json:"pong"`
+    }
+
+        //gotravel_travel homestay_activity
+    AddHomestayActivityReq{
+        Id int64 `json:"id,optional"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DeleteTime string `json:"deletetime,optional"`
+        version int64 `json:"version,optinal"`
+        DelState int64 `json:"delstate,optional"`
+        RowStatus int64 `json:"rowstatus,default=1"`
+        RowType string `json:"rowtype,optional"`
+        DataId int64 `json:"dataid,optional"`
+    }
+
+    AddHomestayActivityResp{
+        Pong int64 `json:"pong"`
+    }
+
+    DeleteHomestayActivityReq {
+        Id int64 `json:"id"`
+    }
+
+    DeleteHomestayActivityResp{
+        Pong  int64 `json:"pong"`
+    }
+
+    ListHomestayActivityReq{
+        //Info string `json:"info,default=%"`
+        Page int64 `json:"page,default=1"`
+        PageSize int64 `json:"pagesize,default=20"`
+    }
+
+    ListHomestayAcitivityItemResp{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime"`
+        UpdateTime string `json:"updatetime"`
+        DeleteTime string `json:"deletetime"`
+        version int64 `json:"version"`
+        DelState int64 `json:"delstate"`
+        RowStatus int64 `json:"rowstatus"`
+        RowType string `json:"rowtype"`
+        DataId int64 `json:"dataid"`
+    }
+
+    ListHomestayActivityResp{
+        Total int64 `json:"total"`
+        List []ListHomestayAcitivityItemResp `json:"list"`
+    }
+
+    UpdateHomestayActivityReq{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DeleteTime string `json:"deletetime,optional"`
+        version int64 `json:"version,optinal"`
+        DelState int64 `json:"delstate,optional"`
+        RowStatus int64 `json:"rowstatus,optional"`  //not default
+        RowType string `json:"rowtype,optional"`
+        DataId int64 `json:"dataid,optional"`
+    }
+
+    UpdateHomestayActivityResp{
+        Pong int64 `json:"pong"`
+    }
+
+        //gotravel_travel homestay_business
+    AddHomestayBusinessReq{
+        Id int64 `json:"id,optional"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DeleteTime string `json:"deletetime,optional"`
+        version int64 `json:"version,optinal"`
+        DelState int64 `json:"delstate,optional"`
+        Title string `json:"title,optional"`
+        UserId int64 `json:"userid,optional"`
+        Info string `json:"info,optional"`
+        BossInfo string `json:"bossinfo,optional"`
+        LicenseFron string `json:"licensefron,optional"`
+        LicenseBack string `json:"licenseback,optional"`
+        RowState int64 `json:"rowstate,default=1"`
+        Star float64 `json:"star,optional"`
+        Tag string `json:"tag,optional"`
+        Cover string `json:"cover,optional"`
+        HeaderImg string `json:"headerimg,optional"`
+    }
+
+    AddHomestayBusinessResp{
+        Pong int64 `json:"pong"`
+    }
+
+    DeleteHomestayBusinessReq {
+        Id int64 `json:"id"`
+    }
+
+    DeleteHomestayBusinessResp{
+        Pong int64 `json:"pong"`
+    }
+
+    UpdateHomestayBusinessReq{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DeleteTime string `json:"deletetime,optional"`
+        version int64 `json:"version,optinal"`
+        DelState int64 `json:"delstate,optional"`
+        Title string `json:"title,optional"`
+        UserId int64 `json:"userid,optional"`
+        Info string `json:"info,optional"`
+        BossInfo string `json:"bossinfo,optional"`
+        LicenseFron string `json:"licensefron,optional"`
+        LicenseBack string `json:"licenseback,optional"`
+        RowState int64 `json:"rowstate,optional"`
+        Star float64 `json:"star,optional"`
+        Tag string `json:"tag,optional"`
+        Cover string `json:"cover,optional"`
+        HeaderImg string `json:"headerimg,optional"`
+    }
+
+    UpdateHomestayBusinessResp{
+        Pong int64 `json:"pong"`
+    }
+
+    ListHomestayBusinessReq{
+        //Info string `json:"info,default=%"`
+        Page int64 `json:"page,default=1"`
+        PageSize int64 `json:"pagesize,default=20"`
+    }
+
+    ListHomestayBusinessItemResp{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime"`
+        UpdateTime string `json:"updatetime"`
+        DeleteTime string `json:"deletetime"`
+        version int64 `json:"version"`
+        DelState int64 `json:"delstate"`
+        Title string `json:"title"`
+        UserId int64 `json:"userid"`
+        Info string `json:"info"`
+        BossInfo string `json:"bossinfo"`
+        LicenseFron string `json:"licensefron"`
+        LicenseBack string `json:"licenseback"`
+        RowState int64 `json:"rowstate"`
+        Star float64 `json:"star"`
+        Tag string `json:"tag"`
+        Cover string `json:"cover"`
+        HeaderImg string `json:"headerimg"`
+    }
+
+    ListHomestayBusinessResp{
+        Total int64 `json:"total"`
+        LIst []ListHomestayBusinessItemResp `json:"list"`
+    }
+
+
+        //gotravel_travel homestay_comment
+    AddHomestaycommentReq{
+        Id int64 `json:"id,optional"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DeleteTime string `json:"deletetime,optional"`
+        version int64 `json:"version,optinal"`
+        DelState int64 `json:"delstate,optional"`
+        HomestayId int64 `json:"homwstayid,optional"`
+        UserId int64 `json:"userid,optional"`
+        Star float64 `json:"star,optional"`
+        Content string `json:"content,optioanal"`
+    }
+
+    AddHomestaycommentResp {
+        Pong int64 `json:"pong"`
+    }
+
+    DeleteHomestaycommentReq{
+        Id int64 `json:"id"`
+    }
+
+    DeleteHomestaycommentResp {
+        Pong int64 `json:"pong"`
+    }
+
+    ListHomestaycommentReq {
+        //Info string `json:"info,default=%"`
+        Page int64 `json:"page,default=1"`
+        PageSize int64 `json:"pagesize,default=20"`
+    }
+
+    ListHomestaycommentItemResp {
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime"`
+        UpdateTime string `json:"updatetime"`
+        DeleteTime string `json:"deletetime"`
+        version int64 `json:"version"`
+        DelState int64 `json:"delstate"`
+        HomestayId int64 `json:"homwstayid"`
+        UserId int64 `json:"userid"`
+        Start float64 `json:"start"`
+        Content string `json:"content"`
+    }
+    ListHomestaycommentResp{
+        Total int64 `json:"total"`
+        List []ListHomestaycommentItemResp `jsoan:"list"`
+    }
+
+    UpdateHomestaycommentReq{
+        Id int64 `json:"id"`
+        CreateTime string `json:"createtime,optional"`
+        UpdateTime string `json:"updatetime,optional"`
+        DeleteTime string `json:"deletetime,optional"`
+        version int64 `json:"version,optinal"`
+        DelState int64 `json:"delstate,optional"`
+        HomestayId int64 `json:"homwstayid,optional"`
+        UserId int64 `json:"userid,optional"`
+        Star float64 `json:"star,optional"`
+        Content string `json:"content,optioanal"`
+    }
+
+    UpdateHomestaycommentResp{
+        Pong int64 `json:"pong"`
+    }
+)
+

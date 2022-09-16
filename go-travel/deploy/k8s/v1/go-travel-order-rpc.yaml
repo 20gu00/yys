@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-rpc
+  namespace: gozero
+  labels:
+    app: order-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: order-rpc
+  template:
+    metadata:
+      labels:
+        app: order-rpc
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: order-rpc
+        image: harbor.k8s.local/library/gotravel-order-rpc:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 2001
+        readinessProbe:
+          tcpSocket:
+            port: 2001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 2001
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-rpc-svc
+  namespace: gozero
+spec:
+  ports:
+    - port: 2001
+  selector:
+    app: order-rpc
+

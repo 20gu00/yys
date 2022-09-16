@@ -1,0 +1,33 @@
+Name: admin.rpc
+ListenOn: 0.0.0.0:1015
+
+Mysql:
+  Datasource: root:100.Acjq@tcp(mysql:3306)/gotravel_admin?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 5001
+  Path: /metrics
+
+Log:
+  Mode: console
+  ServiceName: admin.rpc
+  Level: error
+  Encoding: json
+
+Redis:
+  Host: redis:6379
+  #Type: node
+  Pass:
+
+JWT:
+  AccessSecret: ad879037-c7a4-4063-9236-6bfc35d54b7d
+  AccessExpire: 86400
+
+Cache:
+  - Host: redis:6379
+    Pass:
+
+#JwtAuth:
+#  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
+#  AccessExpire: 31536000

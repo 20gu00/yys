@@ -1,0 +1,40 @@
+/*------------------这是提供给我个人开发过程使用，读者不要求阅读-------------*/
+
+mysqldump -uroot -p --databases looklook_admin looklook_usercenter looklook_travel looklook_order looklook_payment > all.sql
+asynq : sheduler job: defer queue mesage queue
+create database gotravel_order character set utf8mb4 collate=utf8mb4_general_ci
+create database go_gateway character set utf8mb4 COLLATE=utf8mb4_general_ci;
+goctl rpc protoc *.proto --go_out=../ --go-grpc_out=../ --zrpc_out=../ --style=goZero
+sed -i  's/,omitempty//g' *.pb.go
+goctl api go -api *.api -dir ../ --style=goZero
+./genModel.sh looklook_usercenter user*
+建议在生成rpc文件时候，在多执行一次下面那个命令，把protobuf生成的omitempty给删除掉，不然字段为nil就不返回了
+
+goctl docker -go main,go
+goctl kube deploy --nodePort 32101 -replicas 2 -requestCpu 150 -requestMem 50 -limitCpu 300 -limitMem 100 -name admin-api -namespace gozero -image gotravel-admin-api:v1 -o go-travel-admin-api.yaml -port 5005 -serviceAccount find-endpoints
+goctl kube deploy  -replicas 2 -requestCpu 150 -requestMem 50 -limitCpu 300 -limitMem 100 -name admin-rpc -namespace gozero -image gotravel-admin-rpc:v1 -o go-travel-admin-rpc.yaml -port 1015 -serviceAccount find-endpoints
+docker run -d --name nginx --network=host  -v /root/go-travel/tools/nginx/conf.d:/etc/nginx/conf.d  nginx
+curl -X POST http://go-travel:8081/usercenter/v1/user/login -H "Content-Type: application/json" -d "{\"mobile\":\"13019991099\",\"password\":\"passwd\"}"
+
+foreignkey or all have one key
+
+looklook_usercenter travel order payment admin
+
+
+123456 passwd
+
+
+
+
+---
+docker pull wurstmeister/kafka
+docker pull wurstmeister/zookeeper
+docker run -it --name zookeeper -p 12181:2181 -d wurstmeister/zookeeper:latest
+docker run -it --name kafka01 -p 19092:9092 -d -e KAFKA_BROKER_ID=0 -e KAFKA_ZOOKEEPER_CONNECT=192.168.233.129:12181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.233.129:19092 -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 wurstmeister/kafka:latest
+
+--net=host 2181 9092
+
+redis 4.0以上
+
+payment-update-paystatus-topic
+

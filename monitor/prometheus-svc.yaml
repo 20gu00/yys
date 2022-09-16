@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: kube-mon
+  labels:
+    app: prometheus
+spec:
+  selector:
+    app: prometheus
+  type: NodePort   #NodePort类型方便测试
+  ports:
+    - name: web
+      port: 9090
+      targetPort: http
+

@@ -1,0 +1,88 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    meta.helm.sh/release-name: harbor
+    meta.helm.sh/release-namespace: kube-ops
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-redirect-https@kubernetescrd
+  labels:
+    app: harbor
+    app.kubernetes.io/managed-by: Helm
+    chart: harbor
+    heritage: Helm
+    release: harbor
+  name: harbor-harbor-ingress-http
+  namespace: kube-ops
+spec:
+  rules:
+  - host: harbor.k8s.local
+    http:
+      paths:
+      - backend:
+          serviceName: harbor-harbor-portal
+          servicePort: 80
+        path: /
+        pathType: Prefix
+      - backend:
+          serviceName: harbor-harbor-core
+          servicePort: 80
+        path: /api
+        pathType: Prefix
+      - backend:
+          serviceName: harbor-harbor-core
+          servicePort: 80
+        path: /service
+        pathType: Prefix
+      - backend:
+          serviceName: harbor-harbor-core
+          servicePort: 80
+        path: /v2
+        pathType: Prefix
+      - backend:
+          serviceName: harbor-harbor-core
+          servicePort: 80
+        path: /chartrepo
+        pathType: Prefix
+      - backend:
+          serviceName: harbor-harbor-core
+          servicePort: 80
+        path: /c
+        pathType: Prefix
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    meta.helm.sh/release-name: harbor
+    meta.helm.sh/release-namespace: kube-ops
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-redirect-https@kubernetescrd
+  labels:
+    app: harbor
+    app.kubernetes.io/managed-by: Helm
+    chart: harbor
+    heritage: Helm
+    release: harbor
+  name: harbor-harbor-ingress-notary-http
+  namespace: kube-ops
+spec:
+  rules:
+  - host: notary.k8s.local
+    http:
+      paths:
+      - backend:
+          serviceName: harbor-harbor-notary-server
+          servicePort: 4443
+        path: /
+        pathType: Prefix
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-https
+  namespace: kube-system
+spec:
+  redirectScheme:
+    scheme: https

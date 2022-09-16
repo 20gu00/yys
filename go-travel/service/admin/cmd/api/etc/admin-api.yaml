@@ -1,0 +1,52 @@
+Name: admin-api
+Host: 0.0.0.0
+Port: 5005
+
+Auth:
+  AccessSecret: ad879037-c7a4-4063-9236-6bfc35d54b7d
+  AccessExpire: 86400
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 5000
+  Path: /metrics
+
+Redis:
+  Address: redis:6379
+  Pass:
+
+Log:
+  ServiceName: admin-api
+  Mode: console
+  Level: error
+  Encoding: json
+
+AdminRpcConf:
+#  Endpoints:
+#    - 127.0.0.1:1015
+  Target: k8s://gozero/admin-rpc-svc:1015
+  NonBlock: true
+
+UsercenterRpcConf:
+#  Endpoints:
+#    - 127.0.0.1:2004
+  Target: k8s://gozero/usercenter-rpc-svc:2004
+  NonBlock: true
+
+PaymentRpcConf:
+#  Endpoints:
+#    - 127.0.0.1:2002
+  Target: k8s://gozero/payment-rpc-svc:2002
+  NonBlock: true
+
+OrderRpcConf:
+#  Endpoints:
+#    - 127.0.0.1:2001
+  Target: k8s://gozero/order-rpc-svc:2001
+  NonBlock: true
+
+TravelRpcConf:
+#  Endpoints:
+#    - 127.0.0.1:2003
+  Target: k8s://gozero/travel-rpc-svc:2003
+  NonBlock: true

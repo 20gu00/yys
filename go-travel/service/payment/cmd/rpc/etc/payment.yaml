@@ -1,0 +1,36 @@
+Name: payment-rpc
+ListenOn: 0.0.0.0:2002
+Mode: dev
+
+#监控
+Prometheus:
+  Host: 0.0.0.0
+  Port: 4005
+  Path: /metrics
+
+Redis:
+  Host: redis:6379
+  Pass:
+#  Type: node
+#  Pass: G62m50oigInC30sf
+
+DB:
+  DataSource: root:100.Acjq@tcp(mysql:3306)/gotravel_payment?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+
+Cache:
+  - Host: redis:6379
+    Pass:
+#    Pass: G62m50oigInC30sf
+
+#pay success notify order-mq for kq(kafka pub sub)
+KqPaymentUpdatePayStatusConf:
+  Brokers:
+    - kafka:9092
+    #- 127.0.0.1:9092
+  Topic: payment-update-paystatus
+
+Log:
+  ServiceName: payment-rpc
+  Mode: console
+  Level: error
+  Encoding: json

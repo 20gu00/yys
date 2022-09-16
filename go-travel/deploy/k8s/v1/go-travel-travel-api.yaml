@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travel-api
+  namespace: gozero
+  labels:
+    app: travel-api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: travel-api
+  template:
+    metadata:
+      labels:
+        app: travel-api
+    spec:
+      serviceAccountName: find-endpoints
+      containers:
+      - name: travel-api
+        image: gotravel-travel-api:v1
+        ports:
+        - containerPort: 1003
+        readinessProbe:
+          tcpSocket:
+            port: 1003
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 1003
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 150m
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: travel-api-svc
+  namespace: gozero
+spec:
+  ports:
+    - nodePort: 32104
+      port: 1003
+      protocol: TCP
+      targetPort: 1003
+  type: NodePort
+  selector:
+    app: travel-api
+

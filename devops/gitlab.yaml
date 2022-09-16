@@ -1,0 +1,162 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-pv
+spec:
+  storageClassName: local  # Local PV
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  local:
+    path: /var/lib/k8s/gitlab/data/
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - node2
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-pvc
+  namespace: kube-ops
+spec:
+  storageClassName: local
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab
+  namespace: kube-ops
+  labels:
+    name: gitlab
+spec:
+  selector:
+    matchLabels:
+      name: gitlab
+  template:
+    metadata:
+      name: gitlab
+      labels:
+        name: gitlab
+    spec:
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        command: ["sh", "-c", "chown -R 1000:1000 /home/git/data"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: data
+          mountPath: /home/git/data
+      containers:
+      - name: gitlab
+        image: sameersbn/gitlab:13.12.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: Asia/Shanghai
+        - name: GITLAB_TIMEZONE
+          value: Beijing
+        - name: GITLAB_SECRETS_DB_KEY_BASE
+          value: long-and-random-alpha-numeric-string
+        - name: GITLAB_SECRETS_SECRET_KEY_BASE
+          value: long-and-random-alpha-numeric-string
+        - name: GITLAB_SECRETS_OTP_KEY_BASE
+          value: long-and-random-alpha-numeric-string
+        - name: GITLAB_ROOT_PASSWORD
+          value: admin321
+        - name: GITLAB_ROOT_EMAIL
+          value: 517554016@qq.com
+        - name: GITLAB_HOST
+          value: git.k8s.local
+        - name: GITLAB_PORT
+          value: "80"
+        - name: GITLAB_SSH_PORT
+          value: "22"
+        - name: GITLAB_NOTIFY_ON_BROKEN_BUILDS
+          value: "true"
+        - name: GITLAB_NOTIFY_PUSHER
+          value: "false"
+        - name: GITLAB_BACKUP_SCHEDULE
+          value: daily
+        - name: GITLAB_BACKUP_TIME
+          value: 01:00
+        - name: DB_TYPE
+          value: postgres
+        - name: DB_HOST
+          value: postgresql
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_USER
+          value: gitlab
+        - name: DB_PASS
+          value: passw0rd
+        - name: DB_NAME
+          value: gitlab_production
+        - name: REDIS_HOST
+          value: redis
+        - name: REDIS_PORT
+          value: "6379"
+        ports:
+        - name: http
+          containerPort: 80
+        - name: ssh
+          containerPort: 22
+        volumeMounts:
+        - mountPath: /home/git/data
+          name: data
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 60
+          timeoutSeconds: 1
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: gitlab-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab
+  namespace: kube-ops
+  labels:
+    name: gitlab
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: ssh
+      port: 22
+      targetPort: ssh
+  selector:
+    name: gitlab
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gitlab
+  namespace: kube-ops
+spec:
+  entryPoints:
+  - web
+  routes:
+  - kind: Rule
+    match: Host(`git.k8s.local`)
+    services:
+    - name: gitlab
+      port: 80
+

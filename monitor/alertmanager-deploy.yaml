@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager
+  namespace: kube-mon
+  labels:
+    app: alertmanager
+spec:
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+    spec:
+      volumes:
+      - name: alertcfg
+        configMap:
+          name: alert-config
+      containers:
+      - name: alertmanager
+        image: prom/alertmanager:v0.21.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - "--config.file=/etc/alertmanager/config.yml"   #配置文件路径
+        ports:
+        - containerPort: 9093
+          name: http
+        volumeMounts:
+        - mountPath: "/etc/alertmanager"   #将配置文件的cm挂载到这里
+          name: alertcfg
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi

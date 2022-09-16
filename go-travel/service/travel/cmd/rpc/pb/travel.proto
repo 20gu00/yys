@@ -1,0 +1,392 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+
+//model
+message Homestay {
+    int64   id = 1;
+    string  title = 2;
+    string  subTitle = 3;
+    string  banner = 4;
+    string  info = 5;
+    int64   peopleNum = 6;            //容纳人的数量
+    int64   homestayBusinessId = 7;   //店铺id
+    int64   userId = 8;               //房东id
+    int64   rowState = 9;             //0:下架 1:上架
+    int64   rowType = 10;             //售卖类型0：按房间出售 1:按人次出售
+    string  foodInfo = 11;            //餐食标准
+    int64   foodPrice = 12;           //餐食价格(分)
+    int64   homestayPrice = 13;       //民宿价格(分)
+    int64   marketHomestayPrice = 14; //民宿市场价格(分)
+
+}
+
+
+//req 、resp
+message HomestayDetailReq {
+  int64   id = 1;
+}
+message HomestayDetailResp {
+  Homestay homestay = 1;
+}
+
+//provide to admin use
+message AddHomestayReq{
+    int64 Id =1;
+    string CreateTime =2;
+    string UpdateTime=3;
+    string DelTime=4;
+    int64 version=5;
+    string Title=6;
+    string SubTitle=7;
+    string Banner=8;
+    string Info=9;
+    int64 PeopleNum=10;
+    int64 HomestayBusinessId=11;
+    int64 UserId=12;
+    int64 RowState=13;
+    string FoodInfo=14;
+    int64 FoodPrice=15;
+    int64 HomestayPrice=16;
+    int64 MarketHomestayPrice=17; //insert use optional
+    int64 RowType=18;
+}
+
+message AddHomestayResp{
+   int64  Pong=1;
+}
+
+message ListHomestayReq{
+    //string Info =1;
+    int64 Page =2;
+    int64 PageSize=3;
+}
+
+message ListHomestayItemResp{
+    int64 Id=1;
+    string CreateTime=2;
+    string UpdateTime=3;
+    string DelTime=4;
+    int64 version=5;
+    string Title=6;
+    string SubTitle=7;
+    string Banner=8;
+    string Info=9;
+    int64 PeopleNum=10;
+    int64 HomestayBusinessId=11;
+    int64 UserId=12;
+    int64 RowState=13;
+    string FoodInfo=14;
+    int64 FoodPrice=15;
+    int64 HomestayPrice=16;
+    int64 MarketHomestayPrice=17;
+    int64 RowType=18;
+}
+
+message ListHomestayResp{
+    int64 Total=1;
+    repeated  ListHomestayItemResp List=2;
+}
+
+message DeleteHomestayReq{
+    int64 Id=1;
+}
+
+message DeleteHomestayResp{
+    int64 Pong=1;
+}
+
+message UpdateHomestayReq{
+    int64 Id=1;
+    string CreateTime=2;
+    string UpdateTime=3;
+    string DelTime=4;
+    int64 version=5;
+    string Title=6;
+    string SubTitle=7;
+    string Banner=8;
+    string Info=9;
+    int64 PeopleNum=10;
+    int64 HomestayBusinessId=11;
+    int64 UserId=12;
+    int64 RowState=13;
+    string FoodInfo=14;
+    int64 FoodPrice=15;
+    int64 HomestayPrice=16;
+    int64 MarketHomestayPrice=17;
+    int64 RowType=18;
+}
+
+message UpdateHomestayResp{
+    int64 Pong=1;
+}
+
+//gotravel_travel homestay_activity
+message AddHomestayActivityReq{
+    int64 Id=1;
+    string CreateTime=2;
+    string UpdateTime=3;
+    string DeleteTime=4;
+    int64 version=5;
+    int64 DelState=6;
+    int64 RowStatus=7;
+    string RowType=8;
+    int64 DataId=9;
+    int64 ActivityId=10;
+}
+
+message AddHomestayActivityResp{
+    int64 Pong=1;
+}
+
+message DeleteHomestayActivityReq {
+    int64 Id=1;
+}
+
+message DeleteHomestayActivityResp{
+    int64 Pong=1;
+}
+
+message ListHomestayActivityReq{
+    //string Info=1;
+    int64 Page=1;
+    int64 PageSize=2;
+}
+
+message ListHomestayAcitivityItemResp{
+    int64 Id=1;
+    string CreateTime=2;
+    string UpdateTime=3;
+    string DeleteTime=4;
+    int64 version=5;
+    int64 DelState=6;
+    int64 RowStatus=7;
+    string RowType=8;
+    int64 DataId=9;
+    int64 ActivityId=10;
+}
+
+message ListHomestayActivityResp{
+    int64 Total=1;
+    repeated  ListHomestayAcitivityItemResp List=2;
+    }
+
+message UpdateHomestayActivityReq{
+    int64 Id=1;
+    string CreateTime=2;
+    string UpdateTime=3;
+    string DeleteTime=4;
+    int64 version=5;
+    int64 DelState=6;
+    int64 RowStatus=7;
+    string RowType=8;
+    int64 DataId=9;
+    int64 ActivityId=10;
+}
+
+message UpdateHomestayActivityResp{
+    int64 Pong=1;
+}
+
+//gotravel_travel homestay_business
+message AddHomestayBusinessReq{
+    int64 Id=1;
+    string CreateTime=2;
+    string UpdateTime=3;
+    string DeleteTime=4;
+    int64 version=5;
+    int64 DelState=6;
+    string Title=7;
+    int64 UserId=8;
+    string Info=9;
+    string BossInfo=10;
+    string LicenseFron=11;
+    string LicenseBack=12;
+    int64 RowState=13;
+    float Star=14;   //no float64int64
+    string Tag=15;
+    string Cover=16;
+    string HeaderImg=17;
+}
+
+message AddHomestayBusinessResp{
+    int64 Pong=1;
+}
+
+message DeleteHomestayBusinessReq {
+    int64 Id=1;
+}
+
+message DeleteHomestayBusinessResp{
+    int64 Pong=1;
+}
+
+message UpdateHomestayBusinessReq{
+    int64 Id = 1;
+    string CreateTime = 2;
+    string UpdateTime = 3;
+    string DeleteTime = 4;
+    int64 version = 5;
+    int64 DelState = 6;
+    string Title = 7;
+    int64 UserId = 8;
+    string Info = 9;
+    string BossInfo = 10;
+    string LicenseFron = 11;
+    string LicenseBack = 12;
+    int64 RowState = 13;
+    float Star = 14;   //no float64
+    string Tag = 15;
+    string Cover = 16;
+    string HeaderImg = 17;
+}
+
+message UpdateHomestayBusinessResp{
+    int64 Pong=1;
+}
+
+message ListHomestayBusinessReq{
+    //string Info=1;
+    int64 Page=2;
+    int64 PageSize=3;
+}
+
+message ListHomestayBusinessItemResp{
+    int64 Id = 1;
+    string CreateTime = 2;
+    string UpdateTime = 3;
+    string DeleteTime = 4;
+    int64 version = 5;
+    int64 DelState = 6;
+    string Title = 7;
+    int64 UserId = 8;
+    string Info = 9;
+    string BossInfo = 10;
+    string LicenseFron = 11;
+    string LicenseBack = 12;
+    int64 RowState = 13;
+    float Star = 14;   //no float64
+    string Tag = 15;
+    string Cover = 16;
+    string HeaderImg = 17;
+}
+
+message ListHomestayBusinessResp{
+    int64 Total=1;
+    repeated ListHomestayBusinessItemResp List=2;
+}
+
+
+//looklook_travel homestay_comment
+message  AddHomestaycommentReq{
+    int64 Id=1;
+    string CreateTime=2;
+    string UpdateTime=3;
+    string DeleteTime=4;
+    int64 version=5;
+    int64 DelState=6;
+    int64 HomestayId=7;
+    int64 UserId=8;
+    float Star=9;
+    string Content=10;
+    }
+
+message AddHomestaycommentResp {
+    int64 Pong=1;
+}
+
+message DeleteHomestaycommentReq{
+    int64 Id=1;
+}
+
+message DeleteHomestaycommentResp {
+    int64 Pong=1;
+}
+
+message ListHomestaycommentReq {
+    //string Info=1;
+    int64 Page=2;
+    int64 PageSize=3;
+}
+
+message ListHomestaycommentItemResp {
+    int64 Id=1;
+    string CreateTime=2;
+    string UpdateTime=3;
+    string DeleteTime=4;
+    int64 version=5;
+    int64 DelState=6;
+    int64 HomestayId=7;
+    int64 UserId=8;
+    float Star=9;
+    string Content=10;
+}
+message ListHomestaycommentResp{
+    int64 Total=1;
+    repeated ListHomestaycommentItemResp List=2;
+}
+
+message UpdateHomestaycommentReq{
+    int64 Id=1;
+    string CreateTime=2;
+    string UpdateTime=3;
+    string DeleteTime=4;
+    int64 version=5;
+    int64 DelState=6;
+    int64 HomestayId=7;
+    int64 UserId=8;
+    float Star=9;
+    string Content=10;
+}
+
+message UpdateHomestaycommentResp{
+    int64 Pong=1;
+}
+
+
+//service
+service travel {
+    //homestayDetail
+    rpc homestayDetail(HomestayDetailReq) returns(HomestayDetailResp);
+
+    //provide to admin use
+    //homestay
+    rpc addHomestay(AddHomestayReq) returns(AddHomestayResp);
+
+    rpc deleteHomestay(DeleteHomestayReq) returns(DeleteHomestayResp);
+
+    rpc updateHomestay(UpdateHomestayReq) returns (UpdateHomestayResp);
+
+    rpc listHomestay(ListHomestayReq) returns (ListHomestayResp);
+
+    //homestayActivity
+    rpc addHomestayActivity(AddHomestayActivityReq) returns (AddHomestayActivityResp);
+
+    rpc deleteHomestatActivity(DeleteHomestayActivityReq) returns (DeleteHomestayResp);
+
+    rpc updateHomestayActivity(UpdateHomestayActivityReq) returns (UpdateHomestayActivityResp);
+
+    rpc listHomestayActivity(ListHomestayActivityReq) returns (ListHomestayActivityResp);
+
+    //homestayBusiness
+    rpc addHomestayBusiness(AddHomestayBusinessReq) returns (AddHomestayActivityResp);
+
+    rpc deleteHomestayBusiness(DeleteHomestayBusinessReq) returns(DeleteHomestayBusinessResp);
+
+    rpc updateHomestayBussiness(UpdateHomestayBusinessReq) returns (UpdateHomestayBusinessResp);
+
+    rpc listHomestayBussiness(ListHomestayBusinessReq) returns (ListHomestayBusinessResp);
+
+    //homestayComment
+    rpc listHomestayComment(ListHomestaycommentReq) returns (ListHomestaycommentResp);
+
+    rpc addHomestayComment(AddHomestaycommentReq) returns (AddHomestaycommentResp);
+
+    rpc DeleteHomestayComment(DeleteHomestaycommentReq) returns (DeleteHomestaycommentResp);
+
+    rpc UpdateHomestayComment(UpdateHomestaycommentReq) returns (UpdateHomestaycommentResp);
+
+}
