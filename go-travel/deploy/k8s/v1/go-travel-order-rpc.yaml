@@ -55,6 +55,9 @@ kind: Service
 metadata:
   name: order-rpc-svc
   namespace: gozero
+  annotations:
+    prometheus.io/port: "4002"
+    prometheus.io/scrape: "true"
 spec:
   ports:
     - port: 2001

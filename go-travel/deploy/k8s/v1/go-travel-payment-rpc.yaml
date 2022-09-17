@@ -54,6 +54,9 @@ kind: Service
 metadata:
   name: payment-rpc-svc
   namespace: gozero
+  annotations:
+    prometheus.io/port: "4005"
+    prometheus.io/scrape: "true"
 spec:
   ports:
     - port: 2002

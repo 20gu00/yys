@@ -9,7 +9,7 @@ data:
       # 当alertmanager持续多长时间未接收到告警后标记告警状态为 resolved
       resolve_timeout: 5m   #持续5m为收到告警信息告警状态变成resolvd，以解决
       # 配置邮件发送信息
-      smtp_smarthost: 'smtp.163.com:25'   #用于发送电子邮件的邮局，465才是加密端口                                                                                                                                                                                                                                                                      
+      smtp_smarthost: 'smtp.163.com:25'   #用于发送电子邮件的邮局，465才是加密端口 
       smtp_from: 'a3472189068@163.com'   #自己在邮局注册的邮箱账号
       smtp_auth_username: 'a3472189068@163.com'   #邮件验证名，也是邮箱账号(用来验证发件账号的用户名和信息)
       smtp_auth_password: 'BNPUEZNCXTHFWXYQ'   #邮箱账号授权码注意是授权码，区邮箱后台开启查看授权码

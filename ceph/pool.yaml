@@ -1,0 +1,9 @@
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: k8s-test-pool   # operator会监听并创建一个pool，执行完后界面上也能看到对应的pool
+  namespace: rook-ceph
+spec:
+  failureDomain: host  # 数据块的故障域: 值为host时，每个数据块将放置在不同的主机上;值为osd时，每个数据块将放置在不同的osd上
+  replicated:
+    size: 3   # 池中数据的副本数,1就是不保存任何副本

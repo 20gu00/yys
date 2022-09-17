@@ -1,13 +1,9 @@
 <!--- app-name: Apache ZooKeeper -->
 
-# Apache ZooKeeper packaged by Bitnami
+# ZooKeeper
 
-Apache ZooKeeper provides a reliable, centralized register of configuration data and services for distributed applications.
+[ZooKeeper](https://zookeeper.apache.org/) is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services. All of these kinds of services are used in some form or other by distributed applications.
 
-[Overview of Apache ZooKeeper](https://zookeeper.apache.org)
-
-Trademarks: This software listing is packaged by Bitnami. The respective trademarks mentioned in the offering are owned by the respective companies, and use of them does not imply any affiliation or endorsement.
-                           
 ## TL;DR
 
 ```console
@@ -17,9 +13,9 @@ $ helm install my-release bitnami/zookeeper
 
 ## Introduction
 
-This chart bootstraps a [ZooKeeper](https://github.com/bitnami/containers/tree/main/bitnami/zookeeper) deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps a [ZooKeeper](https://github.com/bitnami/bitnami-docker-zookeeper) deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
-Bitnami charts can be used with [Kubeapps](https://kubeapps.dev/) for deployment and management of Helm Charts in clusters.
+Bitnami charts can be used with [Kubeapps](https://kubeapps.com/) for deployment and management of Helm Charts in clusters. This Helm chart has been tested on top of [Bitnami Kubernetes Production Runtime](https://kubeprod.io/) (BKPR). Deploy BKPR to get automated TLS certificates, logging and monitoring for your applications.
 
 ## Prerequisites
 
@@ -80,50 +76,43 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ### ZooKeeper chart parameters
 
-| Name                          | Description                                                                                                                | Value                   |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `image.registry`              | ZooKeeper image registry                                                                                                   | `docker.io`             |
-| `image.repository`            | ZooKeeper image repository                                                                                                 | `bitnami/zookeeper`     |
-| `image.tag`                   | ZooKeeper image tag (immutable tags are recommended)                                                                       | `3.8.0-debian-11-r30`   |
-| `image.digest`                | ZooKeeper image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag                  | `""`                    |
-| `image.pullPolicy`            | ZooKeeper image pull policy                                                                                                | `IfNotPresent`          |
-| `image.pullSecrets`           | Specify docker-registry secret names as an array                                                                           | `[]`                    |
-| `image.debug`                 | Specify if debug values should be set                                                                                      | `false`                 |
-| `auth.client.enabled`         | Enable ZooKeeper client-server authentication. It uses SASL/Digest-MD5                                                     | `false`                 |
-| `auth.client.clientUser`      | User that will use ZooKeeper clients to auth                                                                               | `""`                    |
-| `auth.client.clientPassword`  | Password that will use ZooKeeper clients to auth                                                                           | `""`                    |
-| `auth.client.serverUsers`     | Comma, semicolon or whitespace separated list of user to be created                                                        | `""`                    |
-| `auth.client.serverPasswords` | Comma, semicolon or whitespace separated list of passwords to assign to users when created                                 | `""`                    |
-| `auth.client.existingSecret`  | Use existing secret (ignores previous passwords)                                                                           | `""`                    |
-| `auth.quorum.enabled`         | Enable ZooKeeper server-server authentication. It uses SASL/Digest-MD5                                                     | `false`                 |
-| `auth.quorum.learnerUser`     | User that the ZooKeeper quorumLearner will use to authenticate to quorumServers.                                           | `""`                    |
-| `auth.quorum.learnerPassword` | Password that the ZooKeeper quorumLearner will use to authenticate to quorumServers.                                       | `""`                    |
-| `auth.quorum.serverUsers`     | Comma, semicolon or whitespace separated list of users for the quorumServers.                                              | `""`                    |
-| `auth.quorum.serverPasswords` | Comma, semicolon or whitespace separated list of passwords to assign to users when created                                 | `""`                    |
-| `auth.quorum.existingSecret`  | Use existing secret (ignores previous passwords)                                                                           | `""`                    |
-| `tickTime`                    | Basic time unit (in milliseconds) used by ZooKeeper for heartbeats                                                         | `2000`                  |
-| `initLimit`                   | ZooKeeper uses to limit the length of time the ZooKeeper servers in quorum have to connect to a leader                     | `10`                    |
-| `syncLimit`                   | How far out of date a server can be from a leader                                                                          | `5`                     |
-| `preAllocSize`                | Block size for transaction log file                                                                                        | `65536`                 |
-| `snapCount`                   | The number of transactions recorded in the transaction log before a snapshot can be taken (and the transaction log rolled) | `100000`                |
-| `maxClientCnxns`              | Limits the number of concurrent connections that a single client may make to a single member of the ZooKeeper ensemble     | `60`                    |
-| `maxSessionTimeout`           | Maximum session timeout (in milliseconds) that the server will allow the client to negotiate                               | `40000`                 |
-| `heapSize`                    | Size (in MB) for the Java Heap options (Xmx and Xms)                                                                       | `1024`                  |
-| `fourlwCommandsWhitelist`     | A list of comma separated Four Letter Words commands that can be executed                                                  | `srvr, mntr, ruok`      |
-| `minServerId`                 | Minimal SERVER_ID value, nodes increment their IDs respectively                                                            | `1`                     |
-| `listenOnAllIPs`              | Allow ZooKeeper to listen for connections from its peers on all available IP addresses                                     | `false`                 |
-| `autopurge.snapRetainCount`   | The most recent snapshots amount (and corresponding transaction logs) to retain                                            | `3`                     |
-| `autopurge.purgeInterval`     | The time interval (in hours) for which the purge task has to be triggered                                                  | `0`                     |
-| `logLevel`                    | Log level for the ZooKeeper server. ERROR by default                                                                       | `ERROR`                 |
-| `jvmFlags`                    | Default JVM flags for the ZooKeeper process                                                                                | `""`                    |
-| `dataLogDir`                  | Dedicated data log directory                                                                                               | `""`                    |
-| `configuration`               | Configure ZooKeeper with a custom zoo.cfg file                                                                             | `""`                    |
-| `existingConfigmap`           | The name of an existing ConfigMap with your custom configuration for ZooKeeper                                             | `""`                    |
-| `extraEnvVars`                | Array with extra environment variables to add to ZooKeeper nodes                                                           | `[]`                    |
-| `extraEnvVarsCM`              | Name of existing ConfigMap containing extra env vars for ZooKeeper nodes                                                   | `""`                    |
-| `extraEnvVarsSecret`          | Name of existing Secret containing extra env vars for ZooKeeper nodes                                                      | `""`                    |
-| `command`                     | Override default container command (useful when using custom images)                                                       | `["/scripts/setup.sh"]` |
-| `args`                        | Override default container args (useful when using custom images)                                                          | `[]`                    |
+| Name                        | Description                                                                                                                | Value                   |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `image.registry`            | ZooKeeper image registry                                                                                                   | `docker.io`             |
+| `image.repository`          | ZooKeeper image repository                                                                                                 | `bitnami/zookeeper`     |
+| `image.tag`                 | ZooKeeper image tag (immutable tags are recommended)                                                                       | `3.7.0-debian-10-r265`  |
+| `image.pullPolicy`          | ZooKeeper image pull policy                                                                                                | `IfNotPresent`          |
+| `image.pullSecrets`         | Specify docker-registry secret names as an array                                                                           | `[]`                    |
+| `image.debug`               | Specify if debug values should be set                                                                                      | `false`                 |
+| `auth.enabled`              | Enable ZooKeeper auth. It uses SASL/Digest-MD5                                                                             | `false`                 |
+| `auth.clientUser`           | User that will use ZooKeeper clients to auth                                                                               | `""`                    |
+| `auth.clientPassword`       | Password that will use ZooKeeper clients to auth                                                                           | `""`                    |
+| `auth.serverUsers`          | Comma, semicolon or whitespace separated list of user to be created                                                        | `""`                    |
+| `auth.serverPasswords`      | Comma, semicolon or whitespace separated list of passwords to assign to users when created                                 | `""`                    |
+| `auth.existingSecret`       | Use existing secret (ignores previous passwords)                                                                           | `""`                    |
+| `tickTime`                  | Basic time unit (in milliseconds) used by ZooKeeper for heartbeats                                                         | `2000`                  |
+| `initLimit`                 | ZooKeeper uses to limit the length of time the ZooKeeper servers in quorum have to connect to a leader                     | `10`                    |
+| `syncLimit`                 | How far out of date a server can be from a leader                                                                          | `5`                     |
+| `preAllocSize`              | Block size for transaction log file                                                                                        | `65536`                 |
+| `snapCount`                 | The number of transactions recorded in the transaction log before a snapshot can be taken (and the transaction log rolled) | `100000`                |
+| `maxClientCnxns`            | Limits the number of concurrent connections that a single client may make to a single member of the ZooKeeper ensemble     | `60`                    |
+| `maxSessionTimeout`         | Maximum session timeout (in milliseconds) that the server will allow the client to negotiate                               | `40000`                 |
+| `heapSize`                  | Size (in MB) for the Java Heap options (Xmx and Xms)                                                                       | `1024`                  |
+| `fourlwCommandsWhitelist`   | A list of comma separated Four Letter Words commands that can be executed                                                  | `srvr, mntr, ruok`      |
+| `minServerId`               | Minimal SERVER_ID value, nodes increment their IDs respectively                                                            | `1`                     |
+| `listenOnAllIPs`            | Allow ZooKeeper to listen for connections from its peers on all available IP addresses                                     | `false`                 |
+| `autopurge.snapRetainCount` | The most recent snapshots amount (and corresponding transaction logs) to retain                                            | `3`                     |
+| `autopurge.purgeInterval`   | The time interval (in hours) for which the purge task has to be triggered                                                  | `0`                     |
+| `logLevel`                  | Log level for the ZooKeeper server. ERROR by default                                                                       | `ERROR`                 |
+| `jvmFlags`                  | Default JVM flags for the ZooKeeper process                                                                                | `""`                    |
+| `dataLogDir`                | Dedicated data log directory                                                                                               | `""`                    |
+| `configuration`             | Configure ZooKeeper with a custom zoo.cfg file                                                                             | `""`                    |
+| `existingConfigmap`         | The name of an existing ConfigMap with your custom configuration for ZooKeeper                                             | `""`                    |
+| `extraEnvVars`              | Array with extra environment variables to add to ZooKeeper nodes                                                           | `[]`                    |
+| `extraEnvVarsCM`            | Name of existing ConfigMap containing extra env vars for ZooKeeper nodes                                                   | `""`                    |
+| `extraEnvVarsSecret`        | Name of existing Secret containing extra env vars for ZooKeeper nodes                                                      | `""`                    |
+| `command`                   | Override default container command (useful when using custom images)                                                       | `["/scripts/setup.sh"]` |
+| `args`                      | Override default container args (useful when using custom images)                                                          | `[]`                    |
 
 
 ### Statefulset parameters
@@ -178,7 +167,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | `affinity`                              | Affinity for pod assignment                                                                                                                                                                       | `{}`            |
 | `nodeSelector`                          | Node labels for pod assignment                                                                                                                                                                    | `{}`            |
 | `tolerations`                           | Tolerations for pod assignment                                                                                                                                                                    | `[]`            |
-| `topologySpreadConstraints`             | Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template                                                                          | `[]`            |
+| `topologySpreadConstraints`             | Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template                                                                          | `{}`            |
 | `podManagementPolicy`                   | StatefulSet controller supports relax its ordering guarantees while preserving its uniqueness and identity guarantees. There are two valid pod management policies: `OrderedReady` and `Parallel` | `Parallel`      |
 | `priorityClassName`                     | Name of the existing priority class to be used by ZooKeeper pods, priority class needs to be created beforehand                                                                                   | `""`            |
 | `schedulerName`                         | Kubernetes pod scheduler registry                                                                                                                                                                 | `""`            |
@@ -206,7 +195,6 @@ The command removes all the Kubernetes components associated with the chart and 
 | `service.nodePorts.tls`                     | Node port for TLS                                                                       | `""`        |
 | `service.disableBaseClientPort`             | Remove client port from service definitions.                                            | `false`     |
 | `service.sessionAffinity`                   | Control where client requests go, to the same pod or round-robin                        | `None`      |
-| `service.sessionAffinityConfig`             | Additional settings for the sessionAffinity                                             | `{}`        |
 | `service.clusterIP`                         | ZooKeeper service Cluster IP                                                            | `""`        |
 | `service.loadBalancerIP`                    | ZooKeeper service Load Balancer IP                                                      | `""`        |
 | `service.loadBalancerSourceRanges`          | ZooKeeper service Load Balancer sources                                                 | `[]`        |
@@ -247,18 +235,17 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ### Volume Permissions parameters
 
-| Name                                                   | Description                                                                                                                       | Value                   |
-| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `volumePermissions.enabled`                            | Enable init container that changes the owner and group of the persistent volume                                                   | `false`                 |
-| `volumePermissions.image.registry`                     | Init container volume-permissions image registry                                                                                  | `docker.io`             |
-| `volumePermissions.image.repository`                   | Init container volume-permissions image repository                                                                                | `bitnami/bitnami-shell` |
-| `volumePermissions.image.tag`                          | Init container volume-permissions image tag (immutable tags are recommended)                                                      | `11-debian-11-r27`      |
-| `volumePermissions.image.digest`                       | Init container volume-permissions image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag | `""`                    |
-| `volumePermissions.image.pullPolicy`                   | Init container volume-permissions image pull policy                                                                               | `IfNotPresent`          |
-| `volumePermissions.image.pullSecrets`                  | Init container volume-permissions image pull secrets                                                                              | `[]`                    |
-| `volumePermissions.resources.limits`                   | Init container volume-permissions resource limits                                                                                 | `{}`                    |
-| `volumePermissions.resources.requests`                 | Init container volume-permissions resource requests                                                                               | `{}`                    |
-| `volumePermissions.containerSecurityContext.runAsUser` | User ID for the init container                                                                                                    | `0`                     |
+| Name                                                   | Description                                                                     | Value                   |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------- | ----------------------- |
+| `volumePermissions.enabled`                            | Enable init container that changes the owner and group of the persistent volume | `false`                 |
+| `volumePermissions.image.registry`                     | Init container volume-permissions image registry                                | `docker.io`             |
+| `volumePermissions.image.repository`                   | Init container volume-permissions image repository                              | `bitnami/bitnami-shell` |
+| `volumePermissions.image.tag`                          | Init container volume-permissions image tag (immutable tags are recommended)    | `10-debian-10-r312`     |
+| `volumePermissions.image.pullPolicy`                   | Init container volume-permissions image pull policy                             | `IfNotPresent`          |
+| `volumePermissions.image.pullSecrets`                  | Init container volume-permissions image pull secrets                            | `[]`                    |
+| `volumePermissions.resources.limits`                   | Init container volume-permissions resource limits                               | `{}`                    |
+| `volumePermissions.resources.requests`                 | Init container volume-permissions resource requests                             | `{}`                    |
+| `volumePermissions.containerSecurityContext.runAsUser` | User ID for the init container                                                  | `0`                     |
 
 
 ### Metrics parameters
@@ -288,36 +275,26 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ### TLS/SSL parameters
 
-| Name                                      | Description                                                                                        | Value                                                                 |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `tls.client.enabled`                      | Enable TLS for client connections                                                                  | `false`                                                               |
-| `tls.client.auth`                         | SSL Client auth. Can be "none", "want" or "need".                                                  | `none`                                                                |
-| `tls.client.autoGenerated`                | Generate automatically self-signed TLS certificates for ZooKeeper client communications            | `false`                                                               |
-| `tls.client.existingSecret`               | Name of the existing secret containing the TLS certificates for ZooKeeper client communications    | `""`                                                                  |
-| `tls.client.existingSecretKeystoreKey`    | The secret key from the tls.client.existingSecret containing the Keystore.                         | `""`                                                                  |
-| `tls.client.existingSecretTruststoreKey`  | The secret key from the tls.client.existingSecret containing the Truststore.                       | `""`                                                                  |
-| `tls.client.keystorePath`                 | Location of the KeyStore file used for Client connections                                          | `/opt/bitnami/zookeeper/config/certs/client/zookeeper.keystore.jks`   |
-| `tls.client.truststorePath`               | Location of the TrustStore file used for Client connections                                        | `/opt/bitnami/zookeeper/config/certs/client/zookeeper.truststore.jks` |
-| `tls.client.passwordsSecretName`          | Existing secret containing Keystore and truststore passwords                                       | `""`                                                                  |
-| `tls.client.passwordsSecretKeystoreKey`   | The secret key from the tls.client.passwordsSecretName containing the password for the Keystore.   | `""`                                                                  |
-| `tls.client.passwordsSecretTruststoreKey` | The secret key from the tls.client.passwordsSecretName containing the password for the Truststore. | `""`                                                                  |
-| `tls.client.keystorePassword`             | Password to access KeyStore if needed                                                              | `""`                                                                  |
-| `tls.client.truststorePassword`           | Password to access TrustStore if needed                                                            | `""`                                                                  |
-| `tls.quorum.enabled`                      | Enable TLS for quorum protocol                                                                     | `false`                                                               |
-| `tls.quorum.auth`                         | SSL Quorum Client auth. Can be "none", "want" or "need".                                           | `none`                                                                |
-| `tls.quorum.autoGenerated`                | Create self-signed TLS certificates. Currently only supports PEM certificates.                     | `false`                                                               |
-| `tls.quorum.existingSecret`               | Name of the existing secret containing the TLS certificates for ZooKeeper quorum protocol          | `""`                                                                  |
-| `tls.quorum.existingSecretKeystoreKey`    | The secret key from the tls.quorum.existingSecret containing the Keystore.                         | `""`                                                                  |
-| `tls.quorum.existingSecretTruststoreKey`  | The secret key from the tls.quorum.existingSecret containing the Truststore.                       | `""`                                                                  |
-| `tls.quorum.keystorePath`                 | Location of the KeyStore file used for Quorum protocol                                             | `/opt/bitnami/zookeeper/config/certs/quorum/zookeeper.keystore.jks`   |
-| `tls.quorum.truststorePath`               | Location of the TrustStore file used for Quorum protocol                                           | `/opt/bitnami/zookeeper/config/certs/quorum/zookeeper.truststore.jks` |
-| `tls.quorum.passwordsSecretName`          | Existing secret containing Keystore and truststore passwords                                       | `""`                                                                  |
-| `tls.quorum.passwordsSecretKeystoreKey`   | The secret key from the tls.quorum.passwordsSecretName containing the password for the Keystore.   | `""`                                                                  |
-| `tls.quorum.passwordsSecretTruststoreKey` | The secret key from the tls.quorum.passwordsSecretName containing the password for the Truststore. | `""`                                                                  |
-| `tls.quorum.keystorePassword`             | Password to access KeyStore if needed                                                              | `""`                                                                  |
-| `tls.quorum.truststorePassword`           | Password to access TrustStore if needed                                                            | `""`                                                                  |
-| `tls.resources.limits`                    | The resources limits for the TLS init container                                                    | `{}`                                                                  |
-| `tls.resources.requests`                  | The requested resources for the TLS init container                                                 | `{}`                                                                  |
+| Name                             | Description                                                                                     | Value                                                                 |
+| -------------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `tls.client.enabled`             | Enable TLS for client connections                                                               | `false`                                                               |
+| `tls.client.autoGenerated`       | Generate automatically self-signed TLS certificates for ZooKeeper client communications         | `false`                                                               |
+| `tls.client.existingSecret`      | Name of the existing secret containing the TLS certificates for ZooKeeper client communications | `""`                                                                  |
+| `tls.client.keystorePath`        | Location of the KeyStore file used for Client connections                                       | `/opt/bitnami/zookeeper/config/certs/client/zookeeper.keystore.jks`   |
+| `tls.client.truststorePath`      | Location of the TrustStore file used for Client connections                                     | `/opt/bitnami/zookeeper/config/certs/client/zookeeper.truststore.jks` |
+| `tls.client.passwordsSecretName` | Existing secret containing Keystore and truststore passwords                                    | `""`                                                                  |
+| `tls.client.keystorePassword`    | Password to access KeyStore if needed                                                           | `""`                                                                  |
+| `tls.client.truststorePassword`  | Password to access TrustStore if needed                                                         | `""`                                                                  |
+| `tls.quorum.enabled`             | Enable TLS for quorum protocol                                                                  | `false`                                                               |
+| `tls.quorum.autoGenerated`       | Create self-signed TLS certificates. Currently only supports PEM certificates.                  | `false`                                                               |
+| `tls.quorum.existingSecret`      | Name of the existing secret containing the TLS certificates for ZooKeeper quorum protocol       | `""`                                                                  |
+| `tls.quorum.keystorePath`        | Location of the KeyStore file used for Quorum protocol                                          | `/opt/bitnami/zookeeper/config/certs/quorum/zookeeper.keystore.jks`   |
+| `tls.quorum.truststorePath`      | Location of the TrustStore file used for Quorum protocol                                        | `/opt/bitnami/zookeeper/config/certs/quorum/zookeeper.truststore.jks` |
+| `tls.quorum.passwordsSecretName` | Existing secret containing Keystore and truststore passwords                                    | `""`                                                                  |
+| `tls.quorum.keystorePassword`    | Password to access KeyStore if needed                                                           | `""`                                                                  |
+| `tls.quorum.truststorePassword`  | Password to access TrustStore if needed                                                         | `""`                                                                  |
+| `tls.resources.limits`           | The resources limits for the TLS init container                                                 | `{}`                                                                  |
+| `tls.resources.requests`         | The requested resources for the TLS init container                                              | `{}`                                                                  |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
@@ -352,7 +329,7 @@ Bitnami will release a new chart updating its containers if a new version of the
 
 You can configure the ZooKeeper log level using the `ZOO_LOG_LEVEL` environment variable or the parameter `logLevel`. By default, it is set to `ERROR` because each use of the liveness probe and the readiness probe produces an `INFO` message on connection and a `WARN` message on disconnection, generating a high volume of noise in your logs.
 
-In order to remove that log noise so levels can be set to 'INFO', two changes must be made.
+In order to remove that log noise so levels can be set to ‘INFO’, two changes must be made.
 
 First, ensure that you are not getting metrics via the deprecated pattern of polling 'mntr' on the ZooKeeper client port. The preferred method of polling for Apache ZooKeeper metrics is the ZooKeeper metrics server. This is supported in this chart when setting `metrics.enabled` to `true`.
 
@@ -395,7 +372,7 @@ the available appender is
 
 ## Persistence
 
-The [Bitnami ZooKeeper](https://github.com/bitnami/containers/tree/main/bitnami/zookeeper) image stores the ZooKeeper data and configurations at the `/bitnami/zookeeper` path of the container.
+The [Bitnami ZooKeeper](https://github.com/bitnami/bitnami-docker-zookeeper) image stores the ZooKeeper data and configurations at the `/bitnami/zookeeper` path of the container.
 
 Persistent Volume Claims are used to keep the data across deployments. This is known to work in GCE, AWS, and minikube. See the [Parameters](#parameters) section to configure the PVC or to disable persistence.
 
@@ -424,18 +401,9 @@ As an alternative, you can use any of the preset configurations for pod affinity
 
 ## Troubleshooting
 
-Find more information about how to deal with common errors related to Bitnami's Helm charts in [this troubleshooting guide](https://docs.bitnami.com/general/how-to/troubleshoot-helm-chart-issues).
+Find more information about how to deal with common errors related to Bitnami’s Helm charts in [this troubleshooting guide](https://docs.bitnami.com/general/how-to/troubleshoot-helm-chart-issues).
 
 ## Upgrading
-
-### To 10.0.0
-
-This new version of the chart adds support for server-server authentication.
-The chart previously supported client-server authentication, to avioud confusion, the previous parameters have been renamed from `auth.*` to `auth.client.*`.
-
-### To 9.0.0
-
-This new version of the chart includes the new ZooKeeper major version 3.8.0. Upgrade compatibility is not guaranteed.
 
 ### To 8.0.0
 

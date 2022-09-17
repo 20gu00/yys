@@ -1,0 +1,21 @@
+# values-prod.yaml
+## Persistence parameters
+##
+persistence:
+  enabled: true
+  storageClass: "nfs-storage"
+  accessModes:
+    - ReadWriteOnce
+  size: 5Gi
+  ## Mount point for persistence
+  mountPath: /bitnami/kafka
+
+# 配置zk volumes
+zookeeper:
+  enabled: true
+  persistence:
+    enabled: true
+    storageClass: "nfs-storage"
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi

@@ -54,6 +54,9 @@ kind: Service
 metadata:
   name: usercenter-rpc-svc
   namespace: gozero
+  annotations:
+    prometheus.io/port: "4009"
+    prometheus.io/scrape: "true"
 spec:
   ports:
     - port: 2004

@@ -6,6 +6,7 @@
 {{- range $i, $e := until $replicaCount }}
 {{- $targetPod := printf "%s-%d" (printf "%s" $fullName) $i }}
 {{- $_ := set $ "targetPod" $targetPod }}
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -17,16 +18,10 @@ metadata:
     {{- if $root.Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" $root.Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
-    {{- if $root.Values.externalAccess.service.labels }}
-    {{- include "common.tplvalues.render" ( dict "value" $root.Values.externalAccess.service.labels "context" $) | nindent 4 }}
-    {{- end }}
-  {{- if or $root.Values.externalAccess.service.annotations $root.Values.commonAnnotations $root.Values.externalAccess.service.loadBalancerAnnotations }}
+  {{- if or $root.Values.externalAccess.service.annotations $root.Values.commonAnnotations }}
   annotations:
-    {{- if and (not (empty $root.Values.externalAccess.service.loadBalancerAnnotations)) (eq (len $root.Values.externalAccess.service.loadBalancerAnnotations) $replicaCount) }}
-    {{ include "common.tplvalues.render" ( dict "value" (index $root.Values.externalAccess.service.loadBalancerAnnotations $i) "context" $) | nindent 4 }}
-    {{- end }}
     {{- if $root.Values.externalAccess.service.annotations }}
-    {{- include "common.tplvalues.render" ( dict "value" $root.Values.externalAccess.service.annotations "context" $) | nindent 4 }}
+    {{ include "common.tplvalues.render" ( dict "value" $root.Values.externalAccess.service.annotations "context" $) | nindent 4 }}
     {{- end }}
     {{- if $root.Values.commonAnnotations }}
     {{- include "common.tplvalues.render" ( dict "value" $root.Values.commonAnnotations "context" $ ) | nindent 4 }}
@@ -35,7 +30,7 @@ metadata:
 spec:
   type: {{ $root.Values.externalAccess.service.type }}
   {{- if eq $root.Values.externalAccess.service.type "LoadBalancer" }}
-  {{- if and (not (empty $root.Values.externalAccess.service.loadBalancerIPs)) (eq (len $root.Values.externalAccess.service.loadBalancerIPs) $replicaCount) }}
+  {{- if not (empty $root.Values.externalAccess.service.loadBalancerIPs) }}
   loadBalancerIP: {{ index $root.Values.externalAccess.service.loadBalancerIPs $i }}
   {{- end }}
   {{- if $root.Values.externalAccess.service.loadBalancerSourceRanges }}

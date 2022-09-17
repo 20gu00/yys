@@ -25,11 +25,11 @@ metadata:
 spec:
   storageClassName: "nfs-provisioner"
   capacity:
-    storage: 20Gi
+    storage: 10Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   nfs:
     path: /data/redis  # 指定nfs的挂载点
-    server: 192.168.23.145  # 指定nfs服务地址，这是我node1的主机ip
+    server: 172.23.144.11  # 指定nfs服务地址，这是我node1的主机ip
 

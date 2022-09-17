@@ -28,11 +28,17 @@ spec:
           #value: "123456"
         ports:
         - containerPort: 3306
+        #command: [ "/bin/sh", "-c","mysql -uroot -p100.Acjq < /home/one.sql" ]
         volumeMounts:
         - name: mysqlvolume
           mountPath: /var/lib/mysql
+        - name: sqlcmvolume
+          mountPath: /home
       volumes:
       - name: mysqlvolume
         # 使用pvc
         persistentVolumeClaim:
           claimName: mysql-pv-claim
+      - name: sqlcmvolume
+        configMap:
+          name: sql-cm

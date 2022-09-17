@@ -55,6 +55,9 @@ kind: Service
 metadata:
   name: order-api-svc
   namespace: gozero
+  annotations:
+    prometheus.io/port: "4001"
+    prometheus.io/scrape: "true"
 spec:
   ports:
     - nodePort: 32102

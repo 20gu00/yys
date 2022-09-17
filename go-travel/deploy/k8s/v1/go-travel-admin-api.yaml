@@ -55,6 +55,9 @@ kind: Service
 metadata:
   name: admin-api-svc
   namespace: gozero
+  annotations:
+    prometheus.io/port: "5000"  # metrics 接口的端口
+    prometheus.io/scrape: "true"  # 这个注解可以让prometheus自动发现
 spec:
   ports:
     - nodePort: 32101

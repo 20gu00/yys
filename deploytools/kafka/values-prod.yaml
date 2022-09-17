@@ -3,7 +3,7 @@
 ##
 persistence:
   enabled: true
-  storageClass: "nfs-storage"
+  storageClass: "kafka-storage"
   accessModes:
     - ReadWriteOnce
   size: 5Gi
@@ -15,7 +15,7 @@ zookeeper:
   enabled: true
   persistence:
     enabled: true
-    storageClass: "nfs-storage"
+    storageClass: "kafka-storage"
     accessModes:
       - ReadWriteOnce
     size: 8Gi

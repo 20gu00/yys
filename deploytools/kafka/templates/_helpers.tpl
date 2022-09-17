@@ -158,23 +158,6 @@ Return true if encryption via TLS for client connections should be configured
 {{- end -}}
 
 {{/*
-Return the configured value for the external client protocol, defaults to the same value as clientProtocol
-*/}}
-{{- define "kafka.externalClientProtocol" -}}
-    {{- coalesce .Values.auth.externalClientProtocol .Values.auth.clientProtocol -}}
-{{- end -}}
-
-{{/*
-Return true if encryption via TLS for external client connections should be configured
-*/}}
-{{- define "kafka.externalClient.tlsEncryption" -}}
-{{- $tlsProtocols := list "tls" "mtls" "sasl_tls" -}}
-{{- if (has (include "kafka.externalClientProtocol" . ) $tlsProtocols) -}}
-    {{- true -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Return true if encryption via TLS for inter broker communication connections should be configured
 */}}
 {{- define "kafka.interBroker.tlsEncryption" -}}
@@ -188,7 +171,7 @@ Return true if encryption via TLS for inter broker communication connections sho
 Return true if encryption via TLS should be configured
 */}}
 {{- define "kafka.tlsEncryption" -}}
-{{- if or (include "kafka.client.tlsEncryption" .) (include "kafka.interBroker.tlsEncryption" .) (include "kafka.externalClient.tlsEncryption" .) -}}
+{{- if or (include "kafka.client.tlsEncryption" .) (include "kafka.interBroker.tlsEncryption" .) -}}
     {{- true -}}
 {{- end -}}
 {{- end -}}
@@ -211,21 +194,6 @@ SASL_PLAINTEXT
 {{- end -}}
 
 {{/*
-Return the protocol used with zookeeper
-*/}}
-{{- define "kafka.zookeeper.protocol" -}}
-{{- if and .Values.auth.zookeeper.tls.enabled .Values.zookeeper.auth.client.enabled .Values.auth.sasl.jaas.zookeeperUser -}}
-SASL_SSL
-{{- else if and .Values.auth.zookeeper.tls.enabled -}}
-SSL
-{{- else if and .Values.zookeeper.auth.client.enabled .Values.auth.sasl.jaas.zookeeperUser -}}
-SASL
-{{- else -}}
-PLAINTEXT
-{{- end -}}
-{{- end -}}
-
-{{/*
 Return the Kafka JAAS credentials secret
 */}}
 {{- define "kafka.jaasSecretName" -}}
@@ -242,7 +210,7 @@ Return true if a JAAS credentials secret object should be created
 */}}
 {{- define "kafka.createJaasSecret" -}}
 {{- $secretName := .Values.auth.sasl.jaas.existingSecret -}}
-{{- if and (or (include "kafka.client.saslAuthentication" .) (include "kafka.interBroker.saslAuthentication" .) (and .Values.zookeeper.auth.client.enabled .Values.auth.sasl.jaas.zookeeperUser)) (empty $secretName) -}}
+{{- if and (or (include "kafka.client.saslAuthentication" .) (include "kafka.interBroker.saslAuthentication" .) (and .Values.zookeeper.auth.enabled .Values.auth.sasl.jaas.zookeeperUser)) (empty $secretName) -}}
     {{- true -}}
 {{- end -}}
 {{- end -}}
@@ -264,18 +232,6 @@ Return the Kafka configuration configmap
     {{- printf "%s" (tpl .Values.existingConfigmap $) -}}
 {{- else -}}
     {{- printf "%s-configuration" (include "common.names.fullname" .) -}}
-{{- end -}}
-{{- end -}}
-
-
-{{/*
-Returns the secret name for the Kafka Provisioning client
-*/}}
-{{- define "kafka.client.passwordsSecretName" -}}
-{{- if .Values.provisioning.auth.tls.passwordsSecret -}}
-    {{- printf "%s" (tpl .Values.provisioning.auth.tls.passwordsSecret $) -}}
-{{- else -}}
-    {{- printf "%s-client-secret" (include "common.names.fullname" .) -}}
 {{- end -}}
 {{- end -}}
 
@@ -315,11 +271,11 @@ The exporter uses a different nomenclature so we need to do this hack
 {{- define "kafka.metrics.kafka.saslMechanism" -}}
 {{- $saslMechanisms := .Values.auth.sasl.mechanisms }}
 {{- if contains "scram-sha-512" $saslMechanisms }}
-    {{- print "scram-sha512" -}}
+    {{- printf "scram-sha512" -}}
 {{- else if contains "scram-sha-256" $saslMechanisms }}
-    {{- print "scram-sha256" -}}
+    {{- printf "scram-sha256" -}}
 {{- else -}}
-    {{- print "plain" -}}
+    {{- printf "plain" -}}
 {{- end -}}
 {{- end -}}
 
@@ -363,14 +319,9 @@ Compile all warnings into a single message, and call fail.
 {{- $messages := append $messages (include "kafka.validateValues.nodePortListLength" .) -}}
 {{- $messages := append $messages (include "kafka.validateValues.externalAccessServiceType" .) -}}
 {{- $messages := append $messages (include "kafka.validateValues.externalAccessAutoDiscoveryRBAC" .) -}}
-{{- $messages := append $messages (include "kafka.validateValues.externalAccessAutoDiscoveryIPsOrNames" .) -}}
-{{- $messages := append $messages (include "kafka.validateValues.externalAccessServiceList" (dict "element" "loadBalancerIPs" "context" .)) -}}
-{{- $messages := append $messages (include "kafka.validateValues.externalAccessServiceList" (dict "element" "loadBalancerNames" "context" .)) -}}
-{{- $messages := append $messages (include "kafka.validateValues.externalAccessServiceList" (dict "element" "loadBalancerAnnotations" "context" . )) -}}
 {{- $messages := append $messages (include "kafka.validateValues.saslMechanisms" .) -}}
 {{- $messages := append $messages (include "kafka.validateValues.tlsSecrets" .) -}}
 {{- $messages := append $messages (include "kafka.validateValues.tlsSecrets.length" .) -}}
-{{- $messages := append $messages (include "kafka.validateValues.tlsPasswords" .) -}}
 {{- $messages := without $messages "" -}}
 {{- $message := join "\n" $messages -}}
 
@@ -382,13 +333,13 @@ Compile all warnings into a single message, and call fail.
 {{/* Validate values of Kafka - Authentication protocols for Kafka */}}
 {{- define "kafka.validateValues.authProtocols" -}}
 {{- $authProtocols := list "plaintext" "tls" "mtls" "sasl" "sasl_tls" -}}
-{{- if or (not (has .Values.auth.clientProtocol $authProtocols)) (not (has .Values.auth.interBrokerProtocol $authProtocols)) (not (has (include "kafka.externalClientProtocol" . ) $authProtocols)) -}}
-kafka: auth.clientProtocol auth.externalClientProtocol auth.interBrokerProtocol
+{{- if or (not (has .Values.auth.clientProtocol $authProtocols)) (not (has .Values.auth.interBrokerProtocol $authProtocols)) -}}
+kafka: auth.clientProtocol auth.interBrokerProtocol
     Available authentication protocols are "plaintext", "tls", "mtls", "sasl" and "sasl_tls"
 {{- end -}}
 {{- end -}}
 
-{{/* Validate values of Kafka - number of replicas must be the same as NodePort list */}}
+{{/* Validate values of Kafka - number of replicas must be the same than NodePort list */}}
 {{- define "kafka.validateValues.nodePortListLength" -}}
 {{- $replicaCount := int .Values.replicaCount }}
 {{- $nodePortListLength := len .Values.externalAccess.service.nodePorts }}
@@ -417,32 +368,9 @@ kafka: rbac.create
 {{- end -}}
 {{- end -}}
 
-{{/* Validate values of Kafka - LoadBalancerIPs or LoadBalancerNames should be set when autoDiscovery is disabled */}}
-{{- define "kafka.validateValues.externalAccessAutoDiscoveryIPsOrNames" -}}
-{{- $loadBalancerNameListLength := len .Values.externalAccess.service.loadBalancerNames -}}
-{{- $loadBalancerIPListLength := len .Values.externalAccess.service.loadBalancerIPs -}}
-{{- if and .Values.externalAccess.enabled (eq .Values.externalAccess.service.type "LoadBalancer") (not .Values.externalAccess.autoDiscovery.enabled) (eq $loadBalancerNameListLength 0) (eq $loadBalancerIPListLength 0) }}
-kafka: externalAccess.service.loadBalancerNames or externalAccess.service.loadBalancerIPs
-    By specifying "externalAccess.enabled=true", "externalAccess.autoDiscovery.enabled=false" and
-    "externalAccess.service.type=LoadBalancer" at least one of externalAccess.service.loadBalancerNames
-    or externalAccess.service.loadBalancerIPs  must be set and the length of those arrays must be equal
-    to the number of replicas.
-{{- end -}}
-{{- end -}}
-
-{{/* Validate values of Kafka - number of replicas must be the same as loadBalancerIPs list */}}
-{{- define "kafka.validateValues.externalAccessServiceList" -}}
-{{- $replicaCount := int .context.Values.replicaCount }}
-{{- $listLength := len (get .context.Values.externalAccess.service .element) -}}
-{{- if and .context.Values.externalAccess.enabled (not .context.Values.externalAccess.autoDiscovery.enabled) (eq .context.Values.externalAccess.service.type "LoadBalancer") (gt $listLength 0) (not (eq $replicaCount $listLength)) }}
-kafka: externalAccess.service.{{ .element }}
-    Number of replicas and {{ .element }} array length must be the same. Currently: replicaCount = {{ $replicaCount }} and {{ .element }} = {{ $listLength }}
-{{- end -}}
-{{- end -}}
-
 {{/* Validate values of Kafka - SASL mechanisms must be provided when using SASL */}}
 {{- define "kafka.validateValues.saslMechanisms" -}}
-{{- if and (or (.Values.auth.clientProtocol | regexFind "sasl") (.Values.auth.interBrokerProtocol | regexFind "sasl") (and .Values.zookeeper.auth.client.enabled .Values.auth.sasl.jaas.zookeeperUser)) (not .Values.auth.sasl.mechanisms) }}
+{{- if and (or (.Values.auth.clientProtocol | regexFind "sasl") (.Values.auth.interBrokerProtocol | regexFind "sasl") (and .Values.zookeeper.auth.enabled .Values.auth.sasl.jaas.zookeeperUser)) (not .Values.auth.sasl.mechanisms) }}
 kafka: auth.sasl.mechanisms
     The SASL mechanisms are required when either auth.clientProtocol or auth.interBrokerProtocol use SASL or Zookeeper user is provided.
 {{- end }}
@@ -473,17 +401,6 @@ kafka: auth.tls.existingSecrets
 {{- if ne $replicaCount $existingSecretsLength }}
 kafka: .Values.auth.tls.existingSecrets
     Number of replicas and existingSecrets array length must be the same. Currently: replicaCount = {{ $replicaCount }} and existingSecrets = {{ $existingSecretsLength }}
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{/* Validate values of Kafka provisioning - keyPasswordSecretKey, keystorePasswordSecretKey or truststorePasswordSecretKey must not be used without passwordsSecret */}}
-{{- define "kafka.validateValues.tlsPasswords" -}}
-{{- if and (include "kafka.client.tlsEncryption" .) (not .Values.auth.tls.passwordsSecret) }}
-{{- if or .Values.auth.tls.keyPasswordSecretKey .Values.auth.tls.keystorePasswordSecretKey .Values.auth.tls.truststorePasswordSecretKey }}
-kafka: auth.tls.keyPasswordSecretKey,auth.tls.keystorePasswordSecretKey,auth.tls.truststorePasswordSecretKey
-    auth.tls.keyPasswordSecretKey,auth.tls.keystorePasswordSecretKey,auth.tls.truststorePasswordSecretKey
-    must not be used without passwordsSecret setted.
 {{- end -}}
 {{- end -}}
 {{- end -}}

@@ -23,16 +23,16 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3002
-        readinessProbe:
-          tcpSocket:
-            port: 3002
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        livenessProbe:
-          tcpSocket:
-            port: 3002
-          initialDelaySeconds: 15
-          periodSeconds: 20
+        #readinessProbe:
+        #  tcpSocket:
+        #    port: 3002
+        #  initialDelaySeconds: 5
+        #  periodSeconds: 10
+        #livenessProbe:
+        #  tcpSocket:
+        #    port: 3002
+        #  initialDelaySeconds: 15
+        #  periodSeconds: 20
         resources:
           requests:
             cpu: 150m
@@ -55,6 +55,9 @@ kind: Service
 metadata:
   name: mqjob-rpc-svc
   namespace: gozero
+  annotations:
+    prometheus.io/port: "4010" 
+    prometheus.io/scrape: "true"  
 spec:
   ports:
     - port: 3002

@@ -19,7 +19,7 @@ spec:
       serviceAccountName: find-endpoints
       containers:
       - name: travel-api
-        image: gotravel-travel-api:v1
+        image: harbor.k8s.local/library/gotravel-travel-api:v1
         ports:
         - containerPort: 1003
         readinessProbe:
@@ -54,6 +54,9 @@ kind: Service
 metadata:
   name: travel-api-svc
   namespace: gozero
+  annotations:
+    prometheus.io/port: "4006"
+    prometheus.io/scrape: "true"
 spec:
   ports:
     - nodePort: 32104

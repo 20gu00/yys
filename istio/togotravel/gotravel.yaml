@@ -1,0 +1,37 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gotravel-gateway
+  namespace: gozero
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: gotravel
+  namespace: gozero
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - gotravel-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /admin_login
+    - uri:
+        prefix: /admin
+    route:
+    - destination:
+        host: admin-api-svc
+        port:
+          number: 5005
