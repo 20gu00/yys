@@ -27,11 +27,9 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /admin_login
-    - uri:
-        prefix: /admin
+        prefix: /usercenter/v1/user/register
     route:
     - destination:
-        host: admin-api-svc
+        host: usercenter-api-svc
         port:
-          number: 5005
+          number: 1004
