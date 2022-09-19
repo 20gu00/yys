@@ -1,0 +1,135 @@
+---
+apiVersion: v1 
+kind: Namespace 
+metadata: 
+    name: jenkins 
+    namespace: kube-ops
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  namespace: kube-ops
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: jenkins-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: jenkins
+  namespace: jenkins
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jenkins-master
+  namespace: kube-ops
+spec:
+  replicas: 1
+  serviceName: jenkins
+  selector:
+    matchLabels:
+      app: jenkins-master
+  template:
+    metadata:
+      labels:
+        app: jenkins-master
+    spec:
+      serviceAccount: jenkins
+      initContainers:
+      - name: jenkins-chown
+        image: busybox
+        command: ["sh","-c","chown -R 1000:1000 /var/jenkins_home"]
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: jenkins-data
+          mountPath: /var/jenkins_home
+      #initContainers:
+       # - name: fix-permissions2
+       #   image: busybox
+       #   command: ["sh", "-c", "chown -R 1000:1000 /usr/share/jenkins"]
+       #   securityContext:
+       #     privileged: true
+       #   volumeMounts:
+       #     - name: jenkinswar
+       #       mountPath: /usr/share/jenkins
+      containers:
+      - name: jenkins-master
+        image: jenkinsci/blueocean:1.25.0.1
+        env:
+        - name: JAVA_OPTS
+          value: "-Xms4096m -Xmx5120m -Duser.timezone=Asia/Shanghai -Dhudson.model.DirectoryBrowserSupport.CSP="
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: slave
+          containerPort: 50000
+        volumeMounts:
+        - name: jenkins-data
+          mountPath: /var/jenkins_home
+        #- name: jenkinswar
+         # mountPath: /usr/share/jenkins
+      #volumes:
+       # - name: jenkinswar
+        #  persistentVolumeClaim:
+         #   claimName: jenkins-pvc-war
+  volumeClaimTemplates:
+    - metadata:
+        name: jenkins-data
+      spec:
+        storageClassName: jenkins-storageclass
+        accessModes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: jenkins-storageclass
+provisioner: kubernetes.io/no-provisioner
+reclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jenkins-pv
+spec:
+  storageClassName: "jenkins-storageclass"
+  capacity:
+    storage: 10Gi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /data/jenkins  # 指定nfs的挂载点
+    server: 172.23.144.11  # 指定nfs服务地址，这是我node1的主机ip
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: jenkins-master
+  name: jenkins-svc
+  namespace: kube-ops
+spec:
+  ports:
+  - name: http   #web
+    port: 8080
+    targetPort: 8080
+    nodePort: 31978
+  - name: slave   #agent
+    port: 50000
+    targetPort: 50000
+    #nodePort: 50000
+  selector: 
+    app: jenkins-master
+  type: NodePort
