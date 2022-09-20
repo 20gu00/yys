@@ -5,7 +5,7 @@ metadata:
   name: test
 spec:
   workspaces:
-  - name: godo-repo
+  - name: test-repo
   resources:
     inputs:
       - name: repo

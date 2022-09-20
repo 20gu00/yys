@@ -17,7 +17,7 @@ spec:
   - name: godo-repo
     persistentVolumeClaim:
       claimName: godo-pvc
-   params:
+  params:
   - name: admin-api-image
     value: harbor.k8s.local/godo/admin-api
   - name: admin-rpc-image

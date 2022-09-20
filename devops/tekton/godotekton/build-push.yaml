@@ -5,8 +5,7 @@ metadata:
   name: build-push
 spec:
   workspaces:
-    - name: godo-repo
-      mountPath: /workspace/repo
+    - name: build-repo
   resources:
     inputs: # 定义输入资源
     - name: repo  # 源代码仓库
@@ -41,43 +40,43 @@ spec:
     default: docker:stable
   - name: admin-api-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_admin_api
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_admin_api
   - name: admin-rpc-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_admin_rpc
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_admin_rpc
   - name: order-api-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_order_api
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_order_api
   - name: order-rpc-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_order_rpc
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_order_rpc
   - name: travel-api-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_travel_api
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_travel_api
   - name: travel-rpc-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_travel_rpc
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_travel_rpc
   - name: payment-api-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_payment_api
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_payment_api
   - name: payment-rpc-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_payment_rpc
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_payment_rpc
   - name: usercenter-api-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_usercenter_api
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_usercenter_api
   - name: usercenter-rpc-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_usercenter_rpc
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_usercenter_rpc
   - name: mqjob-rpc-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_mqjob_rpc
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_mqjob_rpc
   - name: mqscheduler-rpc-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_mqscheduler_rpc
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_mqscheduler_rpc
   - name: context
     description: Path to the directory to use as context.
-    default: $(resources.inputs.repo.path)/go-travel #.
+    default: $(resources.inputs.repo.path) #.
   - name: build_extra_args
     description: Extra parameters passed for the build command when building images.
     default: ""
@@ -102,49 +101,61 @@ spec:
       value: '1'
     - name: DOCKER_CERT_PATH  # 使用 sidecar 守护进程生成的证书
       value: /certs/client
-    workingDir: /workspace/repo/go-travel/deploy/docker/v1
+    workingDir: $(resources.inputs.repo.path)
     script: |  # docker 构建命令
       docker login $(params.registry_url)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.admin-api-dockerfile) -t $(params.admin-api-image) $(params.context)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.admin-rpc-dockerfile) -t $(params.admin-rpc-image) $(params.context)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.usercenter-api-dockerfile) -t $(params.usercenter-api-image) $(params.context)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.usercenter-rpc-dockerfile) -t $(params.usercenter-rpc-image) $(params.context)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.travel-api-dockerfile) -t $(params.travel-api-image) $(params.context)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.travel-rpc-dockerfile) -t $(params.travel-rpc-image) $(params.context)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.order-api-dockerfile) -t $(params.order-api-image) $(params.context)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.order-rpc-dockerfile) -t $(params.order-rpc-image) $(params.context)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.mqjob-rpc-dockerfile) -t $(params.mqjob-rpc-image) $(params.context)
-      docker build \
-        $(params.build_extra_args) \
-        --no-cache \
-        -f $(params.mqscheduler-rpc-dockerfile) -t $(params.mqscheduler-rpc-image) $(params.context)
+      docker build -t $(params.admin-api-image) -f $(params.admin-api-dockerfile) $(params.context)
+      docker build -t $(params.admin-rpc-image) -f $(params.admin-rpc-dockerfile) $(params.context)
+      docker build -t $(params.travel-api-image) -f $(params.travel-api-dockerfile) $(params.context)
+      docker build -t $(params.travel-rpc-image) -f $(params.travel-rpc-dockerfile) $(params.context)
+      docker build -t $(params.order-api-image) -f $(params.order-api-dockerfile) $(params.context)
+      docker build -t $(params.order-rpc-image) -f $(params.order-rpc-dockerfile) $(params.context)
+      docker build -t $(params.payment-api-image) -f $(params.payment-api-dockerfile) $(params.context)
+      docker build -t $(params.payment-rpc-image) -f $(params.payment-rpc-dockerfile) $(params.context)
+      docker build -t $(params.usercenter-api-image) -f $(params.usercenter-api-dockerfile) $(params.context)
+      docker build -t $(params.usercenter-rpc-image) -f $(params.usercenter-rpc-dockerfile) $(params.context)
+      docker build -t $(params.mqjob-rpc-image) -f $(params.mqjob-rpc-dockerfile) $(params.context)
+      docker build -t $(params.mqscheduler-rpc-image) -f $(params.mqscheduler-rpc-dockerfile) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+       # --no-cache \
+      #  -f $(params.admin-api-dockerfile) -t $(params.admin-api-image) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+        #--no-cache \
+      #  -f $(params.admin-rpc-dockerfile) -t $(params.admin-rpc-image) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+        #--no-cache \
+      #  -f $(params.usercenter-api-dockerfile) -t $(params.usercenter-api-image) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+        #--no-cache \
+      #  -f $(params.usercenter-rpc-dockerfile) -t $(params.usercenter-rpc-image) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+        #--no-cache \
+      #  -f $(params.travel-api-dockerfile) -t $(params.travel-api-image) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+        #--no-cache \
+      #  -f $(params.travel-rpc-dockerfile) -t $(params.travel-rpc-image) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+        #--no-cache \
+      #  -f $(params.order-api-dockerfile) -t $(params.order-api-image) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+        #--no-cache \
+      #  -f $(params.order-rpc-dockerfile) -t $(params.order-rpc-image) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+        #--no-cache \
+      #  -f $(params.mqjob-rpc-dockerfile) -t $(params.mqjob-rpc-image) $(params.context)
+      #docker build \
+      #  $(params.build_extra_args) \
+        #--no-cache \
+     #   -f $(params.mqscheduler-rpc-dockerfile) -t $(params.mqscheduler-rpc-image) $(params.context)
     volumeMounts:  #声明挂载证书目录
       - mountPath: /certs/client
         name: dind-certs
@@ -157,7 +168,7 @@ spec:
       value: '1'
     - name: DOCKER_CERT_PATH
       value: /certs/client
-    workingDir:  /workspace/repo/go-travel/deploy/docker/v1  #$(resources.inputs.source.path)
+    workingDir:  $(resources.inputs.repo.path)
     script: |  # 推送 docker
       docker push $(params.push_extra_args) $(params.admin-api-image)
       docker push $(params.push_extra_args) $(params.admin-rpc-image)
@@ -192,7 +203,7 @@ spec:
     - mountPath: /certs/client
       name: dind-certs
     readinessProbe:  # 等待 dind daemon 生成它与客户端共享的证书
-      periodSeconds: 1
+      periodSeconds: 200
       exec:
         command: ['ls', '/certs/client/ca.pem']
   volumes:  # 使用 emptyDir 的形式即可

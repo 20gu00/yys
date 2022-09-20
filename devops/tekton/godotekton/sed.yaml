@@ -7,8 +7,7 @@ spec:
   description: >-
     修改yaml文件中的镜像
   workspaces:
-    - name: godo-repo
-      mountPath: /workspace/repo
+    - name: sedyaml-repo
   resources:
     inputs:
       - name: repo
