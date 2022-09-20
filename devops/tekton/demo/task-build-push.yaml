@@ -1,0 +1,41 @@
+# task-build-push.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-and-push
+spec:
+  resources:
+    inputs: # 定义输入资源
+    - name: repo  #输入资源，就是github的那个仓库
+      type: git
+    outputs: # 定义输出资源
+    - name: builtImage # 输出镜像名字
+      type: image
+  params:
+  - name: pathToDockerfile #指明 dockerfile 在仓库中的哪个位置
+    type: string
+    default: $(resources.inputs.repo.path)/Dockerfile # repo资源的路径
+    description: The path to the dockerfile to build
+  - name: pathToContext #指明 dockerfile 在仓库中的哪个位置
+    type: string
+    default: $(resources.inputs.repo.path)  # repo资源的路径
+    description: the build context used by docker daemon
+  - name: imageTag
+    type: string
+    default: "v0.2.0"
+    description: the docker image tag
+  steps:
+    - name: build-and-push
+      image: docker:stable
+      script: |
+        #!/usr/bin/env sh
+        docker login harbor.k8s.local
+        docker build -t $(resources.outputs.builtImage.url):$(params.imageTag) -f $(params.pathToDockerfile) $(params.pathToContext)
+        docker push $(resources.outputs.builtImage.url):$(params.imageTag)  # 这边的参数都是在 input 和 output 中定义的
+      volumeMounts:
+        - name: dockersock #将docker.sock文件挂载进来，使用宿主机docker daemon 构建镜像
+          mountPath: /var/run/docker.sock
+  volumes:
+    - name: dockersock
+      hostPath:
+        path: /var/run/docker.sock

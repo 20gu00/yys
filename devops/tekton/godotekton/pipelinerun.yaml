@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: godo-pipelinerun
+spec:
+  serviceAccountName: build-sa
+  pipelineRef:
+    name: godo-pipeline
+  resources:
+  - name: app-git
+    resourceSpec:
+      type: git
+      params:
+        - name: url
+          value: http://git.k8s.local/godo #https://github.com.cnpmjs.org/cnych/spring-petclinic
+  workspaces:
+  - name: godo-repo
+    persistentVolumeClaim:
+      claimName: godo-pvc
+   params:
+  - name: admin-api-image
+    value: harbor.k8s.local/godo/admin-api
+  - name: admin-rpc-image
+    value: harbor.k8s.local/godo/admin-rpc
+  - name: order-api-image
+    value: harbor.k8s.local/godo/order-api
+  - name: order-rpc-image
+    value: harbor.k8s.local/godo/order-rpc
+  - name: travel-api-image
+    value: harbor.k8s.local/godo/travel-api
+  - name: travel-rpc-image
+    value: harbor.k8s.local/godo/travel-rpc
+  - name: payment-api-image
+    value: harbor.k8s.local/godo/payment-api
+  - name: payment-rpc-image
+    value: harbor.k8s.local/godo/payment-rpc
+  - name: usercenter-api-image
+    value: harbor.k8s.local/godo/usercenter-api
+  - name: usercenter-rpc-image
+    value: harbor.k8s.local/godo/usercenter-rpc
+  - name: mqjob-rpc-image
+    value: harbor.k8s.local/godo/mqjob-rpc
+  - name: mqscheduler-rpc-image
+    value: harbor.k8s.local/godo/mqscheduler-rpc
+

@@ -1,0 +1,48 @@
+# test-pipeline.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: test-pipeline
+spec:
+  resources:  # 为 Tasks 提供输入和输出资源声明
+    - name: demo-git
+      type: git
+    - name: harbor-image
+      type: image
+  params:
+  - name: image-tag
+    type: string
+  tasks:  # 添加task到流水线中
+    # 运行应用测试
+    - name: test
+      taskRef:
+        name: test
+      resources:
+        inputs:
+          - name: repo # Task 输入名称
+            resource: demo-git # Pipeline 资源名称
+    - name: get-build-id
+      taskRef:
+        name: generate-build-id
+      params:
+      - name: base-version
+        value: $(params.image-tag)
+      runAfter:
+      - test # 测试任务执行之后
+    # 构建并推送 Docker 镜像
+    - name: build-and-push
+      taskRef:
+        name: build-and-push
+      runAfter:
+      - test # 测试任务执行之后
+      - get-build-id
+      resources:
+        inputs:
+        - name: repo  # 指定输入的git仓库资源
+          resource: demo-git
+        outputs:  # 指定输出的镜像资源
+        - name: builtImage
+          resource: harbor-image
+      params:
+      - name: imageTag
+        value: "$(tasks.get-build-id.results.build-id)"

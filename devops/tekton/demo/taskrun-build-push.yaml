@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: build-and-push
+spec:
+  serviceAccountName: build-sa   # 关联具有harbor认证信息的serviceaccount
+  taskRef:
+    name: build-and-push  # 关联定义好的task
+  resources:
+    inputs:
+      - name: repo  # 指定输入的仓库资源
+        resourceRef:
+          name: demo-git
+    outputs:  # 指定输出的镜像资源
+      - name: builtImage
+        resourceRef:
+          name: harbor-image
+  params:
+  - name: pathToDockerfile #指明 dockerfile 在仓库中的哪个位置
+    value: $(resources.inputs.repo.path)/Dockerfile # repo资源的路径
+  - name: pathToContext # 指定构建上下文
+    value: $(resources.inputs.repo.path)  # repo资源的路径

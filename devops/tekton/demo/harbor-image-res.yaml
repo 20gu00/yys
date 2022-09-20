@@ -1,0 +1,10 @@
+# harbor-image-res.yaml
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: harbor-image
+spec:
+  type: image
+  params:
+    - name: url
+      value: harbor.k8s.local/course/tekton-demo #构建完的镜像名称

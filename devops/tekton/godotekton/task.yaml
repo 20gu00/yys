@@ -1,0 +1,516 @@
+# task-test.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: test
+spec:
+  workspaces:
+  - name: godo-repo
+  resources:
+    inputs:
+      - name: repo
+        type: git
+  steps:
+    - name: run-test
+      image: golang:1.18-alpine
+      workingDir: /workspace/repo
+      command: ['ls']
+---
+# generate-build-id.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: generate-build-id
+spec:
+  workspaces:
+  - name: godo-repo
+  resources:
+    inputs:
+      - name: repo
+        type: git
+  description: >-
+    Given a base version, this task generates a unique build id by appending
+    the base-version to the current timestamp.
+  params:
+    - name: base-version
+      description: Base product version
+      type: string
+      default: "v1.0"
+  results:
+    - name: timestamp
+      description: Current timestamp
+    - name: build-id
+      description: ID of the current build
+  steps:
+    - name: get-timestamp
+      image: bash:5.0.18
+      script: |
+        #!/usr/bin/env bash
+        ts=`date "+%Y%m%d-%H%M%S"`
+        echo "Current Timestamp: ${ts}"
+        echo ${ts} | tr -d "\n" | tee $(results.timestamp.path)
+    - name: get-buildid
+      image: bash:5.0.18
+      script: |
+        #!/usr/bin/env bash
+        ts=`cat $(results.timestamp.path)`
+        buildId=$(inputs.params.base-version)-${ts}
+        echo ${buildId} | tr -d "\n" | tee $(results.build-id.path)
+---
+# sed.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sed-k8s-yaml
+spec:
+  description: >-
+    修改yaml文件中的镜像
+  workspaces:
+    - name: godo-repo
+      mountPath: /workspace/repo
+  resources:
+    inputs:
+      - name: repo
+        type: git
+  params:
+  - name: admin-api-image
+    description: Reference of the image docker will produce.
+  - name: admin-rpc-image
+    description: Reference of the image docker will produce.
+  - name: usercenter-api-image
+    description: Reference of the image docker will produce.
+  - name: usercenter-rpc-image
+    description: Reference of the image docker will produce.
+  - name: order-api-image
+    description: Reference of the image docker will produce.
+  - name: order-rpc-image
+    description: Reference of the image docker will produce.
+  - name: travel-api-image
+    description: Reference of the image docker will produce.
+  - name: travel-rpc-image
+    description: Reference of the image docker will produce.
+  - name: payment-api-image
+    description: Reference of the image docker will produce.
+  - name: payment-rpc-image
+    description: Reference of the image docker will produce.
+  - name: mqjob-rpc-image
+    description: Reference of the image docker will produce.
+  - name: mqscheduler-rpc-image
+    description: Reference of the image docker will produce.
+  steps:
+    - name: sed
+      image: bash:5.0.18
+      workingDir: /workspace/repo/go-travel/deploy/k8s/v1  #""
+      script: |
+        #!/usr/bin/env bash
+        sed -ir 's/namespace: (.*)/namespace: default/g' *.yaml
+        sed -ir "s/image: (.*)/image: $(admin-api-image)/g" go-travel-admin-api.yaml
+        sed -ir "s/image: (.*)/image: $(admin-rpc-image)/g" go-travel-admin-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(travel-api-image)/g" go-travel-travel-api.yaml
+        sed -ir "s/image: (.*)/image: $(travel-rpc-image)/g" go-travel-travel-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(usercenter-api-image)/g" go-travel-usercenter-api.yaml
+        sed -ir "s/image: (.*)/image: $(usercenter-rpc-image)/g" go-travel-usercenter-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(order-rpc-image)/g" go-travel-order-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(order-api-image)/g" go-travel-order-api.yaml
+        sed -ir "s/image: (.*)/image: $(payment-api-image)/g" go-travel-payment-api.yaml
+        sed -ir "s/image: (.*)/image: $(payment-rpc-image)/g" go-travel-payment-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(mqjob-rpc-image)/g" go-travel-mqjob-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(mqscheduler-rpc-image)/g" go-travel-mqscheduler-rpc.yaml
+---
+# kubectl pod
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: kubectl-deploy
+spec:
+  description: >-
+    kubectl部署pod
+  workspaces:
+    - name: godo-repo
+      mountPath: /workspace/repo
+  resources:
+    inputs:
+      - name: repo
+        type: git
+  steps:
+    - name: kubectl
+      image: cnych/kubectl
+      workingDir: /workspace/repo/go-travel/deploy/k8s/v1
+      script: |
+        #!/usr/bin/env bash
+        kubectl apply -f .
+      volumeMounts:
+        - name: kubeconfig #将/root/.kube文件挂载进来，容器才能访问k8s集群
+          mountPath: /root/.kube
+  volumes:
+    - name: kubeconfig
+      hostPath:
+        path: /root/.kube
+---
+# pipeline.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: godo-pipeline
+spec:
+  workspaces:  # 声明 workspaces
+  - name: godo-repo
+  resources: # 声明使用的资源
+  - name: app-git
+    type: git
+  params:
+  - name: admin-api-image
+    type: string
+  - name: admin-rpc-image
+    type: string
+  - name: travel-api-image
+    type: string
+  - name: travel-rpc-image
+    type: string
+  - name: order-api-image
+    type: string
+  - name: order-rpc-image
+    type: string
+  - name: travel-api-image
+    type: string
+  - name: travel-rpc-image
+    type: string
+  - name: usercenter-api-image
+    type: string
+  - name: usercenter-rpc-image
+    type: string
+  - name: payment-api-image
+    type: string
+  - name: payment-rpc-image
+    type: string
+  - name: mqjob-rpc-image
+    type: string
+  - name: mqscheduler-rpc-image
+    type: string
+  - name: image-tag
+    type: string
+    default: "v0.1"
+  - name: registry_url
+    type: string
+    default: "harbor.k8s.local"
+  - name: registry_mirror
+    type: string
+    default: "https://7uavyeqm.mirror.aliyuncs.com"
+  - name: insecure_registry
+    type: string
+    default: "harbor.k8s.local"
+  tasks:
+  - name: test  # 测试任务
+    taskRef:
+      name: test  # 引用上面的 test 任务
+    resources:  # 传递 resources 资源
+      inputs:
+      - name: repo
+        resource: app-git
+    workspaces:  # 传递 workspaces
+    - name: test-repo
+      workspace: godo-repo
+  - name: generate-imagetag  # 生成基于timestamp的buildid任务
+    taskRef:
+      name: generate-build-id
+    runAfter: ["test"]  # 需要 test 任务执行完成后
+    resources:
+      inputs:
+      - name: repo
+        resource: app-git
+    params:
+      - name: base-version
+        value: $(params.image-tag)
+    workspaces:
+    - name: build-repo
+      workspace: godo-repo
+  - name: build-push  # 构建上传镜像
+    taskRef:
+      name: build-and-push
+    runAfter: ["generate-imagetag"]  # 需要 generate-imagetag 任务执行完成后
+    resources:
+      inputs:
+      - name: repo
+        resource: app-git
+     params:
+      - name: admin-api-image
+        value: "$(params.admin-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: admin-rpc-image
+        value: "$(params.admin-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: travel-api-image
+        value: "$(params.travel-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: travel-rpc-image
+        value: "$(params.travel-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: usercenter-api-image
+        value: "$(params.usercenter-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: usercenter-rpc-image
+        value: "$(params.usercenter-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: order-api-image
+        value: "$(params.order-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: order-rpc-image
+        value: "$(params.order-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: payment-api-image
+        value: "$(params.payment-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: payment-rpc-image
+        value: "$(params.payment-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: mqjob-rpc-image
+        value: "$(params.mqjob-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: mqscheduler-rpc-image
+        value: "$(params.mqscheduler-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: registry_url
+        value: $(params.registry_url)
+      - name: insecure_registry
+        value: $(params.insecure_registry)
+      - name: registry_mirror
+        value: $(params.registry_mirror)
+    workspaces:
+    - name: buildpush-image-repo
+      workspace: godo-repo
+  - name: sedyaml  # 修改yaml文件的镜像版本
+    taskRef:
+      name: sed-k8s-yaml
+    runAfter: ["buildpush-image"]  # 需要 buildpush-image 任务执行完成后
+    resources:
+      inputs:
+      - name: repo
+        resource: app-git
+      params:
+      - name: admin-api-image
+        value: "$(params.admin-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: admin-rpc-image
+        value: "$(params.admin-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: order-api-image
+        value: "$(params.order-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: order-rpc-image
+        value: "$(params.order-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: travel-api-image
+        value: "$(params.travel-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: travel-rpc-image
+        value: "$(params.travel-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: payment-api-image
+        value: "$(params.payment-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: payment-rpc-image
+        value: "$(params.payment-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: usercenter-api-image
+        value: "$(params.usercenter-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: usercenter-rpc-image
+        value: "$(params.usercenter-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: mqjob-rpc-image
+        value: "$(params.mqjob-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: mqscheduler-rpc-image
+        value: "$(params.mqscheduler-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    workspaces:
+    - name: sedyaml-repo
+      workspace: godo-repo
+  - name: kubectl-deploy  # kubectl部署pod
+    taskRef:
+      name: kubectl-deploy
+    runAfter: ["sedyaml"]  # 需要 sedyaml 任务执行完成后
+    resources:
+      inputs:
+      - name: repo
+        resource: app-git
+    workspaces:
+    - name: kubectl-deploy-repo
+      workspace: godo-repo
+---
+# build-push.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-push
+spec:
+  workspaces:
+    - name: godo-repo
+      mountPath: /workspace/repo
+  resources:
+    inputs: # 定义输入资源
+    - name: repo  # 源代码仓库
+      type: git
+  params:
+  - name: admin-api-image
+    description: Reference of the image docker will produce.
+  - name: admin-rpc-image
+    description: Reference of the image docker will produce.
+  - name: usercenter-api-image
+    description: Reference of the image docker will produce.
+  - name: usercenter-rpc-image
+    description: Reference of the image docker will produce.
+  - name: order-api-image
+    description: Reference of the image docker will produce.
+  - name: order-rpc-image
+    description: Reference of the image docker will produce.
+  - name: travel-api-image
+    description: Reference of the image docker will produce.
+  - name: travel-rpc-image
+    description: Reference of the image docker will produce.
+  - name: payment-api-image
+    description: Reference of the image docker will produce.
+  - name: payment-rpc-image
+    description: Reference of the image docker will produce.
+  - name: mqjob-rpc-image
+    description: Reference of the image docker will produce.
+  - name: mqscheduler-rpc-image
+    description: Reference of the image docker will produce.
+  - name: builder_image
+    description: The location of the docker builder image.
+    default: docker:stable
+  - name: admin-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_admin_api
+  - name: admin-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_admin_rpc
+  - name: order-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_order_api
+  - name: order-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_order_rpc
+  - name: travel-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_travel_api
+  - name: travel-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_travel_rpc
+  - name: payment-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_payment_api
+  - name: payment-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_payment_rpc
+  - name: usercenter-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_usercenter_api
+  - name: usercenter-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_usercenter_rpc
+  - name: mqjob-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_mqjob_rpc
+  - name: mqscheduler-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/go-travel/deploy/docker/v1/Dockerfile_mqscheduler_rpc
+  - name: context
+    description: Path to the directory to use as context.
+    default: $(resources.inputs.repo.path)/go-travel #.
+  - name: build_extra_args
+    description: Extra parameters passed for the build command when building images.
+    default: ""
+  - name: push_extra_args
+    description: Extra parameters passed for the push command when pushing images.
+    default: ""
+  - name: insecure_registry
+    description: Allows the user to push to an insecure registry that has been specified
+    default: ""
+  - name: registry_mirror
+    description: Specific the docker registry mirror
+    default: ""
+  - name: registry_url
+    description: private docker images registry url
+  steps:
+  - name: docker-build  # 构建步骤
+    image: $(params.builder_image)
+    env:
+    - name: DOCKER_HOST  # 用 TLS 形式通过 TCP 链接 sidecar
+      value: tcp://localhost:2376
+    - name: DOCKER_TLS_VERIFY  # 校验 TLS
+      value: '1'
+    - name: DOCKER_CERT_PATH  # 使用 sidecar 守护进程生成的证书
+      value: /certs/client
+    workingDir: /workspace/repo/go-travel/deploy/docker/v1
+    script: |  # docker 构建命令
+      docker login $(params.registry_url)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.admin-api-dockerfile) -t $(params.admin-api-image) $(params.context)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.admin-rpc-dockerfile) -t $(params.admin-rpc-image) $(params.context)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.usercenter-api-dockerfile) -t $(params.usercenter-api-image) $(params.context)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.usercenter-rpc-dockerfile) -t $(params.usercenter-rpc-image) $(params.context)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.travel-api-dockerfile) -t $(params.travel-api-image) $(params.context)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.travel-rpc-dockerfile) -t $(params.travel-rpc-image) $(params.context)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.order-api-dockerfile) -t $(params.order-api-image) $(params.context)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.order-rpc-dockerfile) -t $(params.order-rpc-image) $(params.context)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.mqjob-rpc-dockerfile) -t $(params.mqjob-rpc-image) $(params.context)
+      docker build \
+        $(params.build_extra_args) \
+        --no-cache \
+        -f $(params.mqscheduler-rpc-dockerfile) -t $(params.mqscheduler-rpc-image) $(params.context)
+    volumeMounts:  #声明挂载证书目录
+      - mountPath: /certs/client
+        name: dind-certs
+  - name: docker-push  #
+    image: $(params.builder_image)
+    env:
+    - name: DOCKER_HOST
+      value: tcp://localhost:2376
+    - name: DOCKER_TLS_VERIFY
+      value: '1'
+    - name: DOCKER_CERT_PATH
+      value: /certs/client
+    workingDir:  /workspace/repo/go-travel/deploy/docker/v1  #$(resources.inputs.source.path)
+    script: |  # 推送 docker
+      docker push $(params.push_extra_args) $(params.admin-api-image)
+      docker push $(params.push_extra_args) $(params.admin-rpc-image)
+      docker push $(params.push_extra_args) $(params.order-api-image)
+      docker push $(params.push_extra_args) $(params.order-rpc-image)
+      docker push $(params.push_extra_args) $(params.travel-api-image)
+      docker push $(params.push_extra_args) $(params.travel-rpc-image)
+      docker push $(params.push_extra_args) $(params.usercenter-api-image)
+      docker push $(params.push_extra_args) $(params.usercenter-rpc-image)
+      docker push $(params.push_extra_args) $(params.payment-api-image)
+      docker push $(params.push_extra_args) $(params.payment-rpc-image)
+      docker push $(params.push_extra_args) $(params.mqjob-rpc-image)
+      docker push $(params.push_extra_args) $(params.mqscheduler-rpc-image)
+    volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+  sidecars:  # sidecar 模式，提供 docker daemon服务，实现真正的 DinD 模式
+  - image: docker:dind
+    name: server
+    args:
+      - --storage-driver=vfs
+      - --userland-proxy=false
+      - --debug
+      - --insecure-registry=$(params.insecure_registry)
+      - --registry-mirror=$(params.registry_mirror)
+    securityContext:
+      privileged: true
+    env:
+    - name: DOCKER_TLS_CERTDIR  # 将生成的证书写入与客户端共享的路径
+      value: /certs
+    volumeMounts:
+    - mountPath: /certs/client
+      name: dind-certs
+    readinessProbe:  # 等待 dind daemon 生成它与客户端共享的证书
+      periodSeconds: 1
+      exec:
+        command: ['ls', '/certs/client/ca.pem']
+  volumes:  # 使用 emptyDir 的形式即可
+  - name: dind-certs
+    emptyDir: {}

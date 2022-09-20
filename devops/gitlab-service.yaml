@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab
+  namespace: kube-ops
+  labels:
+    name: gitlab
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      nodePort: 32289 #云服务器通过方式做到本地访问，所以gitlab生成仓库urlip:port，这是不固定的，这里写定port
+    - name: ssh
+      port: 22
+      targetPort: ssh
+      nodePort: 30022
+  type: NodePort
+  selector:
+    name: gitlab

@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: nfs-zk
 spec:
-  storageClassName: "nfs-storage"
+  storageClassName: "kafka-storage"
   capacity:
     storage: 20Gi
   accessModes:
@@ -11,7 +11,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     path: /data/zk  # 指定nfs的挂载点
-    server: 192.168.23.145  # 指定nfs服务地址，这是我node1的主机ip
+    server: 172.23.144.11  # 指定nfs服务地址，这是我node1的主机ip
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -25,7 +25,7 @@ kind: PersistentVolume
 metadata:
   name: nfs-kafka
 spec:
-  storageClassName: "nfs-storage"
+  storageClassName: "kafka-storage"
   capacity:
     storage: 20Gi
   accessModes:
@@ -33,4 +33,4 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     path: /data/kafka  # 指定nfs的挂载点
-    server: 192.168.23.145  # 指定nfs服务地址，这是我node1的主机ip
+    server: 172.23.144.11  # 指定nfs服务地址，这是我node1的主机ip

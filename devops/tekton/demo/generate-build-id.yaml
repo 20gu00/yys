@@ -1,0 +1,34 @@
+# generate-build-id.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: generate-build-id
+spec:
+  description: >-
+    Given a base version, this task generates a unique build id by appending
+    the base-version to the current timestamp.
+  params:
+    - name: base-version
+      description: Base product version
+      type: string
+      default: "1.0"
+  results:
+    - name: timestamp
+      description: Current timestamp
+    - name: build-id
+      description: ID of the current build
+  steps:
+    - name: get-timestamp
+      image: bash:5.0.18
+      script: |
+        #!/usr/bin/env bash
+        ts=`date "+%Y%m%d-%H%M%S"`
+        echo "Current Timestamp: ${ts}"
+        echo ${ts} | tr -d "\n" | tee $(results.timestamp.path)
+    - name: get-buildid
+      image: bash:5.0.18
+      script: |
+        #!/usr/bin/env bash
+        ts=`cat $(results.timestamp.path)`
+        buildId=$(inputs.params.base-version)-${ts}
+        echo ${buildId} | tr -d "\n" | tee $(results.build-id.path)

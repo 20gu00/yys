@@ -1,0 +1,19 @@
+# test-pipelinerun.yaml
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: test-pipelinerun
+spec:
+  serviceAccountName: build-sa
+  pipelineRef:
+    name: test-pipeline
+  resources:
+  - name: demo-git  # 指定输入的git仓库资源
+    resourceRef:
+      name: demo-git
+  - name: harbor-image  # 指定输出的镜像资源
+    resourceRef:
+      name: harbor-image
+  params:
+  - name: image-tag
+    value: "v0.3.0"
