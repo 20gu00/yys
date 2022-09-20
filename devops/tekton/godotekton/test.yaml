@@ -1,0 +1,17 @@
+# task-test.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: test
+spec:
+  workspaces:
+  - name: godo-repo
+  resources:
+    inputs:
+      - name: repo
+        type: git
+  steps:
+    - name: run-test
+      image: golang:1.18-alpine
+      workingDir: /workspace/repo
+      command: ['ls']

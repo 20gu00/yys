@@ -1,0 +1,59 @@
+# sed.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sed-k8s-yaml
+spec:
+  description: >-
+    修改yaml文件中的镜像
+  workspaces:
+    - name: godo-repo
+      mountPath: /workspace/repo
+  resources:
+    inputs:
+      - name: repo
+        type: git
+  params:
+  - name: admin-api-image
+    description: Reference of the image docker will produce.
+  - name: admin-rpc-image
+    description: Reference of the image docker will produce.
+  - name: usercenter-api-image
+    description: Reference of the image docker will produce.
+  - name: usercenter-rpc-image
+    description: Reference of the image docker will produce.
+  - name: order-api-image
+    description: Reference of the image docker will produce.
+  - name: order-rpc-image
+    description: Reference of the image docker will produce.
+  - name: travel-api-image
+    description: Reference of the image docker will produce.
+  - name: travel-rpc-image
+    description: Reference of the image docker will produce.
+  - name: payment-api-image
+    description: Reference of the image docker will produce.
+  - name: payment-rpc-image
+    description: Reference of the image docker will produce.
+  - name: mqjob-rpc-image
+    description: Reference of the image docker will produce.
+  - name: mqscheduler-rpc-image
+    description: Reference of the image docker will produce.
+  steps:
+    - name: sed
+      image: bash:5.0.18
+      workingDir: /workspace/repo/go-travel/deploy/k8s/v1  #""
+      script: |
+        #!/usr/bin/env bash
+        sed -ir 's/namespace: (.*)/namespace: default/g' *.yaml
+        sed -ir "s/image: (.*)/image: $(admin-api-image)/g" go-travel-admin-api.yaml
+        sed -ir "s/image: (.*)/image: $(admin-rpc-image)/g" go-travel-admin-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(travel-api-image)/g" go-travel-travel-api.yaml
+        sed -ir "s/image: (.*)/image: $(travel-rpc-image)/g" go-travel-travel-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(usercenter-api-image)/g" go-travel-usercenter-api.yaml
+        sed -ir "s/image: (.*)/image: $(usercenter-rpc-image)/g" go-travel-usercenter-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(order-rpc-image)/g" go-travel-order-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(order-api-image)/g" go-travel-order-api.yaml
+        sed -ir "s/image: (.*)/image: $(payment-api-image)/g" go-travel-payment-api.yaml
+        sed -ir "s/image: (.*)/image: $(payment-rpc-image)/g" go-travel-payment-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(mqjob-rpc-image)/g" go-travel-mqjob-rpc.yaml
+        sed -ir "s/image: (.*)/image: $(mqscheduler-rpc-image)/g" go-travel-mqscheduler-rpc.yaml

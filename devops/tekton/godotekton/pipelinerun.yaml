@@ -12,7 +12,7 @@ spec:
       type: git
       params:
         - name: url
-          value: http://git.k8s.local/godo #https://github.com.cnpmjs.org/cnych/spring-petclinic
+          value: http://git.k8s.local/root/godo #注意用户，这里是root，这里需要gitlab采用域名登录最好，在浏览器的主机做好域名解析即可 https://github.com.cnpmjs.org/cnych/spring-petclinic
   workspaces:
   - name: godo-repo
     persistentVolumeClaim:

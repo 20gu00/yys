@@ -1,0 +1,161 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: godo-pipeline
+spec:
+  workspaces:  # 声明 workspaces
+  - name: godo-repo
+  resources: # 声明使用的资源
+  - name: app-git
+    type: git
+  params:
+  - name: admin-api-image
+    type: string
+  - name: admin-rpc-image
+    type: string
+  - name: travel-api-image
+    type: string
+  - name: travel-rpc-image
+    type: string
+  - name: order-api-image
+    type: string
+  - name: order-rpc-image
+    type: string
+  - name: usercenter-api-image
+    type: string
+  - name: usercenter-rpc-image
+    type: string
+  - name: payment-api-image
+    type: string
+  - name: payment-rpc-image
+    type: string
+  - name: mqjob-rpc-image
+    type: string
+  - name: mqscheduler-rpc-image
+    type: string
+  - name: image-tag
+    type: string
+    default: "v0.1"
+  - name: registry_url
+    type: string
+    default: "harbor.k8s.local"
+  - name: registry_mirror
+    type: string
+    default: "https://7uavyeqm.mirror.aliyuncs.com/"
+  - name: insecure_registry
+    type: string
+    default: "harbor.k8s.local"
+  tasks:
+  - name: test  # 测试任务
+    taskRef:
+      name: test  # 引用上面的 test 任务
+    resources:  # 传递 resources 资源
+      inputs:
+      - name: repo
+        resource: app-git
+    workspaces:  # 传递 workspaces
+    - name: test-repo
+      workspace: godo-repo
+  - name: generate-imagetag  # 生成基于timestamp的buildid任务
+    taskRef:
+      name: generate-build-id
+    runAfter: ["test"]  # 需要 test 任务执行完成后
+    resources:
+      inputs:
+      - name: repo
+        resource: app-git
+    params:
+    - name: base-version
+      value: $(params.image-tag)
+    workspaces:
+    - name: build-repo
+      workspace: godo-repo
+  - name: build-push  # 构建上传镜像
+    taskRef:
+      name: build-and-push
+    runAfter: ["generate-imagetag"]  # 需要 generate-imagetag 任务执行完成后
+    resources:
+      inputs:
+      - name: repo
+        resource: app-git
+    params:
+    - name: admin-api-image
+      value: "$(params.admin-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: admin-rpc-image
+      value: "$(params.admin-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: travel-api-image
+      value: "$(params.travel-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: travel-rpc-image
+      value: "$(params.travel-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: usercenter-api-image
+      value: "$(params.usercenter-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: usercenter-rpc-image
+      value: "$(params.usercenter-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: order-api-image
+      value: "$(params.order-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: order-rpc-image
+      value: "$(params.order-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: payment-api-image
+      value: "$(params.payment-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: payment-rpc-image
+      value: "$(params.payment-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: mqjob-rpc-image
+      value: "$(params.mqjob-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: mqscheduler-rpc-image
+      value: "$(params.mqscheduler-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: registry_url
+      value: $(params.registry_url)
+    - name: insecure_registry
+      value: $(params.insecure_registry)
+    - name: registry_mirror
+      value: $(params.registry_mirror)
+    workspaces:
+    - name: buildpush-image-repo
+      workspace: godo-repo
+  - name: sedyaml  # 修改yaml文件的镜像版本
+    taskRef:
+      name: sed-k8s-yaml
+    runAfter: ["buildpush-image"]  # 需要 buildpush-image 任务执行完成后
+    resources:
+      inputs:
+      - name: repo
+        resource: app-git
+      params:
+      - name: admin-api-image
+        value: "$(params.admin-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: admin-rpc-image
+        value: "$(params.admin-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: order-api-image
+        value: "$(params.order-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: order-rpc-image
+        value: "$(params.order-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: travel-api-image
+        value: "$(params.travel-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: travel-rpc-image
+        value: "$(params.travel-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: payment-api-image
+        value: "$(params.payment-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: payment-rpc-image
+        value: "$(params.payment-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: usercenter-api-image
+        value: "$(params.usercenter-api-image):$(tasks.generate-build-id.results.build-id)"
+      - name: usercenter-rpc-image
+        value: "$(params.usercenter-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: mqjob-rpc-image
+        value: "$(params.mqjob-rpc-image):$(tasks.generate-build-id.results.build-id)"
+      - name: mqscheduler-rpc-image
+        value: "$(params.mqscheduler-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    workspaces:
+    - name: sedyaml-repo
+      workspace: godo-repo
+  - name: kubectl-deploy  # kubectl部署pod
+    taskRef:
+      name: kubectl-deploy
+    runAfter: ["sedyaml"]  # 需要 sedyaml 任务执行完成后
+    resources:
+      inputs:
+      - name: repo
+        resource: app-git
+    workspaces:
+    - name: kubectl-deploy-repo
+      workspace: godo-repo

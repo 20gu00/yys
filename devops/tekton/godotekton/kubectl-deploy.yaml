@@ -1,0 +1,29 @@
+# kubectl pod
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: kubectl-deploy
+spec:
+  description: >-
+    kubectl部署pod
+  workspaces:
+    - name: godo-repo
+      mountPath: /workspace/repo
+  resources:
+    inputs:
+      - name: repo
+        type: git
+  steps:
+    - name: kubectl
+      image: cnych/kubectl
+      workingDir: /workspace/repo/go-travel/deploy/k8s/v1
+      script: |
+        #!/usr/bin/env bash
+        kubectl apply -f .
+      volumeMounts:
+        - name: kubeconfig #将/root/.kube文件挂载进来，容器才能访问k8s集群
+          mountPath: /root/.kube
+  volumes:
+    - name: kubeconfig
+      hostPath:
+        path: /root/.kube

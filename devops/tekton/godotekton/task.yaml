@@ -232,37 +232,37 @@ spec:
       inputs:
       - name: repo
         resource: app-git
-     params:
-      - name: admin-api-image
-        value: "$(params.admin-api-image):$(tasks.generate-build-id.results.build-id)"
-      - name: admin-rpc-image
-        value: "$(params.admin-rpc-image):$(tasks.generate-build-id.results.build-id)"
-      - name: travel-api-image
-        value: "$(params.travel-api-image):$(tasks.generate-build-id.results.build-id)"
-      - name: travel-rpc-image
-        value: "$(params.travel-rpc-image):$(tasks.generate-build-id.results.build-id)"
-      - name: usercenter-api-image
-        value: "$(params.usercenter-api-image):$(tasks.generate-build-id.results.build-id)"
-      - name: usercenter-rpc-image
-        value: "$(params.usercenter-rpc-image):$(tasks.generate-build-id.results.build-id)"
-      - name: order-api-image
-        value: "$(params.order-api-image):$(tasks.generate-build-id.results.build-id)"
-      - name: order-rpc-image
-        value: "$(params.order-rpc-image):$(tasks.generate-build-id.results.build-id)"
-      - name: payment-api-image
-        value: "$(params.payment-api-image):$(tasks.generate-build-id.results.build-id)"
-      - name: payment-rpc-image
-        value: "$(params.payment-rpc-image):$(tasks.generate-build-id.results.build-id)"
-      - name: mqjob-rpc-image
-        value: "$(params.mqjob-rpc-image):$(tasks.generate-build-id.results.build-id)"
-      - name: mqscheduler-rpc-image
-        value: "$(params.mqscheduler-rpc-image):$(tasks.generate-build-id.results.build-id)"
-      - name: registry_url
-        value: $(params.registry_url)
-      - name: insecure_registry
-        value: $(params.insecure_registry)
-      - name: registry_mirror
-        value: $(params.registry_mirror)
+    params:
+    - name: admin-api-image
+      value: "$(params.admin-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: admin-rpc-image
+      value: "$(params.admin-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: travel-api-image
+      value: "$(params.travel-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: travel-rpc-image
+      value: "$(params.travel-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: usercenter-api-image
+      value: "$(params.usercenter-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: usercenter-rpc-image
+      value: "$(params.usercenter-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: order-api-image
+      value: "$(params.order-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: order-rpc-image
+      value: "$(params.order-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: payment-api-image
+      value: "$(params.payment-api-image):$(tasks.generate-build-id.results.build-id)"
+    - name: payment-rpc-image
+      value: "$(params.payment-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: mqjob-rpc-image
+      value: "$(params.mqjob-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: mqscheduler-rpc-image
+      value: "$(params.mqscheduler-rpc-image):$(tasks.generate-build-id.results.build-id)"
+    - name: registry_url
+      value: $(params.registry_url)
+    - name: insecure_registry
+      value: $(params.insecure_registry)
+    - name: registry_mirror
+      value: $(params.registry_mirror)
     workspaces:
     - name: buildpush-image-repo
       workspace: godo-repo
