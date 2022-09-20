@@ -10,29 +10,17 @@ spec:
     type: git
   params:
   - name: admin-api-image
-    type: string
   - name: admin-rpc-image
-    type: string
   - name: travel-api-image
-    type: string
   - name: travel-rpc-image
-    type: string
   - name: order-api-image
-    type: string
   - name: order-rpc-image
-    type: string
   - name: usercenter-api-image
-    type: string
   - name: usercenter-rpc-image
-    type: string
   - name: payment-api-image
-    type: string
   - name: payment-rpc-image
-    type: string
   - name: mqjob-rpc-image
-    type: string
   - name: mqscheduler-rpc-image
-    type: string
   - name: image-tag
     type: string
     default: "v0.1"
