@@ -1,1 +1,0 @@
-kubeadm join 192.168.23.232:6443 --token zfpj5p.87kifex6m8c0d6rf     --discovery-token-ca-cert-hash sha256:89da09c4df2319b2088f6c3c1d08c4b2eb1491dc527374dfd75c2deb053fb975 

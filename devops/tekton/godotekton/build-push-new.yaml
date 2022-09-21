@@ -70,7 +70,7 @@ spec:
     default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_usercenter_rpc
   - name: mqjob-rpc-dockerfile
     description: Path to the Dockerfile to build.
-    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_mqjob_rpc
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_mq_job
   - name: mqscheduler-rpc-dockerfile
     description: Path to the Dockerfile to build.
     default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_mqscheduler_rpc
