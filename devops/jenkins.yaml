@@ -1,41 +1,6 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: jenkins-pv-war
-spec:
-  storageClassName: local-war # Local PV
-  capacity:
-    storage: 2Gi
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
-  local:
-    path: /var/lib/war
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - node1
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jenkins-pvc-war
-  namespace: kube-ops
-spec:
-  storageClassName: local-war
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
   name: jenkins-pv
 spec:
   storageClassName: local # Local PV
@@ -136,15 +101,6 @@ spec:
           volumeMounts:
             - name: jenkinshome
               mountPath: /var/jenkins_home
-      initContainers:
-        - name: fix-permissions2
-          image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /usr/share/jenkins"]
-          securityContext:
-            privileged: true
-          volumeMounts:
-            - name: jenkinswar
-              mountPath: /usr/share/jenkins
       containers:
         - name: jenkins
           image: jenkins/jenkins:lts
@@ -176,15 +132,10 @@ spec:
           volumeMounts:
             - name: jenkinshome
               mountPath: /var/jenkins_home
-            - name: jenkinswar
-              mountPath: /usr/share/jenkins
       volumes:
         - name: jenkinshome
           persistentVolumeClaim:
             claimName: jenkins-pvc
-        - name: jenkinswar
-          persistentVolumeClaim:
-            claimName: jenkins-pvc-war
 ---
 apiVersion: v1
 kind: Service
