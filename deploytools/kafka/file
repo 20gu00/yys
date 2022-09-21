@@ -1,3 +1,0 @@
-helm install kafka bitnami/kafka  -f values-prod.yaml -n gozero
-
-进入kafka-0或者kafka客户端的生产者kafka-console-producer.sh --broker-list kafka-0.kafka-headless.gozero.svc.cluster.local:9092 --topic payment-update-paystatus-topic
