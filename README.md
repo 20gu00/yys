@@ -4,9 +4,9 @@
 一个云原生项目，模拟一条完整的云原生生产线，涉及到各类云原生知识，k8s，容器化，go微服务开发，运维，服务网格istio，存储集群，日志系统，监控系统，devops等 
 
 主要的知识点技术点：  
-云原生基础环境：k8s,docker,linux  
+云原生基础环境：k8s docker linux  
 微服务开发：go go-zero istio  
-CI/CD:tekton gitops  
+CI/CD：tekton gitops  
 存储：rook-ceph nfs共享卷  
 监控：prometheus+grafana+alertmanager  
 日志：ELK Loki  
@@ -16,6 +16,8 @@ CI/CD:tekton gitops
 
 
 我的环境：4台各4核8g的ESC  
+![输入图片说明](tools/image10.png)  
+通过我的公网地址和对应的端口即可访问我对外提供的服务，上面我提到的服务大部分对外开放(后续我考虑将服务端口整理出来供网友公网访问)
 
 个人预计后续优化：  
 1.将程序做成helm包，或者使用operator来实现更贴近云环境的开发  
@@ -35,4 +37,18 @@ CI/CD:tekton gitops
 
 CI/CD:  
 ![输入图片说明](https://foruda.gitee.com/images/1663863643116081908/2a924f51_10984789.png "tekton.png")  
+![输入图片说明](tools/gitlab1.png)  
+![输入图片说明](tools/harbor1.png)  
 
+业务逻辑：  
+![输入图片说明](tools/image.png)  
+![输入图片说明](tools/image2.png)  
+
+相应的service:  
+![输入图片说明](tools/kubernetes-dashboard1.png)  
+![输入图片说明](tools/kubernetes-dashboard2.png)  
+
+监控：  
+![输入图片说明](tools/prometheus1.png)  
+![输入图片说明](tools/grafana3.png)  
+![输入图片说明](tools/grafana2.png)  
