@@ -1,0 +1,50 @@
+#task.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sed-test
+spec:
+  description: >-
+    修改yaml文件中的镜像
+  resources:
+    inputs:
+      - name: repo2
+        type: git
+  params:
+  - name: travel-rpc-image
+    description: Reference of the image docker will produce.
+  steps:
+    - name: sed
+      image: bash:5.0.18
+      workingDir: /workspace/repo2/deploy/k8s/v1  #""
+      script: |
+        #!/usr/bin/env bash
+        sed -i -r "s/image: (.*)/image: $(params.travel-rpc-image)/g" go-travel-travel-rpc.yaml 
+# taskruntest.yaml
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: sedtaskrun
+spec:
+  taskRef:
+    name: sed-test  # 关联定义好的task
+  resources:
+    inputs:
+      - name: repo2  # 指定输入的仓库资源
+        resourceRef:
+          name: demo-git
+  params:
+  - name: travel-rpc-image
+    value: 999 
+#piperesource
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: demo-git
+spec:
+  params:
+  - name: url
+    value: https://git.k8s.local/root/godo
+  - name: revision
+    value: master
+  type: git

@@ -1,0 +1,12 @@
+#piperesource
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: demo-git
+spec:
+  params:
+  - name: url
+    value: http://git.k8s.local/root/godo
+  - name: revision
+    value: master
+  type: git

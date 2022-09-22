@@ -1,0 +1,130 @@
+# build-push.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-push
+spec:
+  workspaces:
+    - name: build-repo
+  resources:
+    inputs: # 定义输入资源
+    - name: repo  # 源代码仓库
+      type: git
+  params:
+  - name: admin-api-image
+    description: Reference of the image docker will produce.
+  - name: admin-rpc-image
+    description: Reference of the image docker will produce.
+  - name: usercenter-api-image
+    description: Reference of the image docker will produce.
+  - name: usercenter-rpc-image
+    description: Reference of the image docker will produce.
+  - name: order-api-image
+    description: Reference of the image docker will produce.
+  - name: order-rpc-image
+    description: Reference of the image docker will produce.
+  - name: travel-api-image
+    description: Reference of the image docker will produce.
+  - name: travel-rpc-image
+    description: Reference of the image docker will produce.
+  - name: payment-api-image
+    description: Reference of the image docker will produce.
+  - name: payment-rpc-image
+    description: Reference of the image docker will produce.
+  - name: mqjob-rpc-image
+    description: Reference of the image docker will produce.
+  - name: mqscheduler-rpc-image
+    description: Reference of the image docker will produce.
+  - name: builder_image
+    description: The location of the docker builder image.
+    default: docker:stable
+  - name: admin-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_admin_api
+  - name: admin-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_admin_rpc
+  - name: order-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_order_api
+  - name: order-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_order_rpc
+  - name: travel-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_travel_api
+  - name: travel-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_travel_rpc
+  - name: payment-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_payment_api
+  - name: payment-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_payment_rpc
+  - name: usercenter-api-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_usercenter_api
+  - name: usercenter-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_usercenter_rpc
+  - name: mqjob-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_mq_job
+  - name: mqscheduler-rpc-dockerfile
+    description: Path to the Dockerfile to build.
+    default: $(resources.inputs.repo.path)/deploy/docker/v1/Dockerfile_mqscheduler_rpc
+  - name: context
+    description: Path to the directory to use as context.
+    default: $(resources.inputs.repo.path) #.
+  - name: build_extra_args
+    description: Extra parameters passed for the build command when building images.
+    default: ""
+  - name: push_extra_args
+    description: Extra parameters passed for the push command when pushing images.
+    default: ""
+  - name: insecure_registry
+    description: Allows the user to push to an insecure registry that has been specified
+    default: ""
+  - name: registry_mirror
+    description: Specific the docker registry mirror
+    default: ""
+  - name: registry_url
+    description: private docker images registry url
+  steps:
+  - name: docker-build  # 构建步骤
+    image: $(params.builder_image)
+    workingDir: $(resources.inputs.repo.path)
+    script: |  # docker 构建命令
+      docker login $(params.registry_url)
+      docker build --no-cache -t $(params.admin-api-image) -f $(params.admin-api-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.admin-api-image)
+      docker build -t $(params.admin-rpc-image) -f $(params.admin-rpc-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.admin-rpc-image)
+      docker build -t $(params.travel-api-image) -f $(params.travel-api-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.travel-api-image)
+      docker build -t $(params.travel-rpc-image) -f $(params.travel-rpc-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.travel-rpc-image)
+      docker build -t $(params.order-api-image) -f $(params.order-api-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.order-api-image)
+      docker build -t $(params.order-rpc-image) -f $(params.order-rpc-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.order-rpc-image)
+      docker build -t $(params.payment-api-image) -f $(params.payment-api-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.payment-api-image)
+      docker build -t $(params.payment-rpc-image) -f $(params.payment-rpc-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.payment-rpc-image)
+      docker build -t $(params.usercenter-api-image) -f $(params.usercenter-api-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.usercenter-api-image)
+      docker build -t $(params.usercenter-rpc-image) -f $(params.usercenter-rpc-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.usercenter-rpc-image)
+      docker build -t $(params.mqjob-rpc-image) -f $(params.mqjob-rpc-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.mqjob-rpc-image)
+      docker build -t $(params.mqscheduler-rpc-image) -f $(params.mqscheduler-rpc-dockerfile) $(params.context)
+      docker push $(params.push_extra_args) $(params.mqscheduler-rpc-image)
+    volumeMounts:  #声明挂载证书目录
+      - mountPath: /var/run/docker.sock
+        name: dockersock
+  volumes:
+    - name: dockersock
+      hostPath:
+        path: /var/run/docker.sock

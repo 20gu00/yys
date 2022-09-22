@@ -1,0 +1,16 @@
+# taskruntest.yaml
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: sedtaskrun
+spec:
+  taskRef:
+    name: sed-test  # 关联定义好的task
+  resources:
+    inputs:
+      - name: repo2  # 指定输入的仓库资源
+        resourceRef:
+          name: demo-git
+  params:
+  - name: travel-rpc-image
+    value: aaa

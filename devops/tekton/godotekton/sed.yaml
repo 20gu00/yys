@@ -40,19 +40,43 @@ spec:
   steps:
     - name: sed
       image: bash:5.0.18
-      workingDir: /workspace/repo/go-travel/deploy/k8s/v1  #""
+      workingDir: /workspace/repo/deploy/k8s/v1  #""
       script: |
         #!/usr/bin/env bash
-        sed -ir 's/namespace: (.*)/namespace: default/g' *.yaml
-        sed -ir "s/image: (.*)/image: $(admin-api-image)/g" go-travel-admin-api.yaml
-        sed -ir "s/image: (.*)/image: $(admin-rpc-image)/g" go-travel-admin-rpc.yaml
-        sed -ir "s/image: (.*)/image: $(travel-api-image)/g" go-travel-travel-api.yaml
-        sed -ir "s/image: (.*)/image: $(travel-rpc-image)/g" go-travel-travel-rpc.yaml
-        sed -ir "s/image: (.*)/image: $(usercenter-api-image)/g" go-travel-usercenter-api.yaml
-        sed -ir "s/image: (.*)/image: $(usercenter-rpc-image)/g" go-travel-usercenter-rpc.yaml
-        sed -ir "s/image: (.*)/image: $(order-rpc-image)/g" go-travel-order-rpc.yaml
-        sed -ir "s/image: (.*)/image: $(order-api-image)/g" go-travel-order-api.yaml
-        sed -ir "s/image: (.*)/image: $(payment-api-image)/g" go-travel-payment-api.yaml
-        sed -ir "s/image: (.*)/image: $(payment-rpc-image)/g" go-travel-payment-rpc.yaml
-        sed -ir "s/image: (.*)/image: $(mqjob-rpc-image)/g" go-travel-mqjob-rpc.yaml
-        sed -ir "s/image: (.*)/image: $(mqscheduler-rpc-image)/g" go-travel-mqscheduler-rpc.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-admin-api.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-admin-rpc.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-travel-api.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-travel-rpc.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-order-api.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-order-rpc.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-usercenter-api.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-usercenter-rpc.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-payment-api.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-payment-rpc.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-mqjob-rpc.yaml
+        sed -i -r 's/namespace: (.*)/namespace: default/g' go-travel-mqscheduler-rpc.yaml 
+        sed -i -r 's/namespace: (.*)/namespace: default/g' admin.sa.yaml
+        echo admin-api-image=$(params.admin-api-image)
+        echo admin-rpc-image=$(params.admin-rpc-image)
+        echo order-api-image=$(params.order-api-image)
+        echo order-rpc-image=$(params.order-rpc-image)
+        echo travel-api-image=$(params.travel-api-image)
+        echo travel-rpc-image=$(params.travel-rpc-image)
+        echo usercenter-api-image=$(params.usercenter-api-image)
+        echo usercenter-rpc-image=$(params.usercenter-rpc-image)
+        echo payment-api-image=$(params.payment-api-image)
+        echo payment-rpc-image=$(params.payment-rpc-image)
+        echo mqjob-rpc-image=$(params.mqjob-rpc-image)
+        echo mqscheduler-rpc-image=$(params.mqscheduler-rpc-image)
+        sed -i -r "s/image: (.*)/image: ${admin-api-image}/g" go-travel-admin-api.yaml
+        sed -i -r "s/image: (.*)/image: ${admin-rpc-image}/g" go-travel-admin-rpc.yaml
+        sed -i -r "s/image: (.*)/image: ${travel-api-image}/g" go-travel-travel-api.yaml
+        sed -i -r "s/image: (.*)/image: ${travel-rpc-image}/g" go-travel-travel-rpc.yaml
+        sed -i -r "s/image: (.*)/image: ${usercenter-api-image}/g" go-travel-usercenter-api.yaml
+        sed -i -r "s/image: (.*)/image: ${usercenter-rpc-image}/g" go-travel-usercenter-rpc.yaml
+        sed -i -r "s/image: (.*)/image: ${order-rpc-image}/g" go-travel-order-rpc.yaml
+        sed -i -r "s/image: (.*)/image: ${order-api-image}/g" go-travel-order-api.yaml
+        sed -i -r "s/image: (.*)/image: ${payment-api-image}/g" go-travel-payment-api.yaml
+        sed -i -r "s/image: (.*)/image: ${payment-rpc-image}/g" go-travel-payment-rpc.yaml
+        sed -i -r "s/image: (.*)/image: ${mqjob-rpc-image}/g" go-travel-mqjob-rpc.yaml
+        sed -i -r "s/image: (.*)/image: ${mqscheduler-rpc-image}/g" go-travel-mqscheduler-rpc.yaml

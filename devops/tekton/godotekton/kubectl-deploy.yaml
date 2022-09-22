@@ -18,7 +18,19 @@ spec:
       workingDir: /workspace/repo/deploy/k8s/v1
       script: |
         #!/usr/bin/env bash
-        kubectl apply -f .
+        kubectl apply -f admin.sa.yaml
+        kubectl apply -f go-travel-admin-api.yaml
+        kubectl apply -f go-travel-admin-rpc.yaml
+        kubectl apply -f go-travel-travel-api.yaml
+        kubectl apply -f go-travel-travel-rpc.yaml
+        kubectl apply -f go-travel-order-api.yaml
+        kubectl apply -f go-travel-order-rpc.yaml
+        kubectl apply -f go-travel-usercenter-api.yaml
+        kubectl apply -f go-travel-usercenter-rpc.yaml
+        kubectl apply -f go-travel-payment-api.yaml
+        kubectl apply -f go-travel-payment-rpc.yaml
+        kubectl apply -f go-travel-mqjob-rpc.yaml
+        kubectl apply -f go-travel-mqscheduler-rpc.yaml
       volumeMounts:
         - name: kubeconfig #将/root/.kube文件挂载进来，容器才能访问k8s集群
           mountPath: /root/.kube
