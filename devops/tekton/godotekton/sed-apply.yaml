@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: sed-k8s-yaml
+  name: sed-apply
 spec:
   description: >-
     修改yaml文件中的镜像
@@ -80,3 +80,28 @@ spec:
         sed -i -r "s/image: (.*)/image: ${payment-rpc-image}/g" go-travel-payment-rpc.yaml
         sed -i -r "s/image: (.*)/image: ${mqjob-rpc-image}/g" go-travel-mqjob-rpc.yaml
         sed -i -r "s/image: (.*)/image: ${mqscheduler-rpc-image}/g" go-travel-mqscheduler-rpc.yaml
+    - name: kubectl
+      image: 010101010007/cjqkubectl:v1
+      workingDir: /workspace/repo/deploy/k8s/v1
+      script: |
+        #!/usr/bin/env bash
+        kubectl apply -f admin.sa.yaml
+        kubectl apply -f go-travel-admin-api.yaml
+        kubectl apply -f go-travel-admin-rpc.yaml
+        kubectl apply -f go-travel-travel-api.yaml
+        kubectl apply -f go-travel-travel-rpc.yaml
+        kubectl apply -f go-travel-order-api.yaml
+        kubectl apply -f go-travel-order-rpc.yaml
+        kubectl apply -f go-travel-usercenter-api.yaml
+        kubectl apply -f go-travel-usercenter-rpc.yaml
+        kubectl apply -f go-travel-payment-api.yaml
+        kubectl apply -f go-travel-payment-rpc.yaml
+        kubectl apply -f go-travel-mqjob-rpc.yaml
+        kubectl apply -f go-travel-mqscheduler-rpc.yaml
+      volumeMounts:
+        - name: kubeconfig #将/root/.kube文件挂载进来，容器才能访问k8s集群
+          mountPath: /root/.kube
+  volumes:
+    - name: kubeconfig
+      hostPath:
+        path: /root/.kube

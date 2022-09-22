@@ -14,7 +14,7 @@ spec:
         type: git
   steps:
     - name: kubectl
-      image: cnych/kubectl
+      image: 010101010007/cjqkubectl:v1
       workingDir: /workspace/repo/deploy/k8s/v1
       script: |
         #!/usr/bin/env bash

@@ -100,9 +100,9 @@ spec:
     workspaces:
     - name: build-repo
       workspace: godo-repo
-  - name: sed-k8s-yaml  # 修改yaml文件的镜像版本
+  - name: sed-apply  # 修改yaml文件的镜像版本
     taskRef:
-      name: sed-k8s-yaml
+      name: sed-apply
     runAfter: ["build-push"]  # 需要 buildpush-image 任务执行完成后
     resources:
       inputs:
@@ -135,15 +135,4 @@ spec:
       value: "$(params.mqscheduler-rpc-image):$(tasks.generate-build-id.results.build-id)"
     workspaces:
     - name: sedyaml-repo
-      workspace: godo-repo
-  - name: kubectl-deploy  # kubectl部署pod
-    taskRef:
-      name: kubectl-deploy
-    runAfter: ["sed-k8s-yaml"]  # 需要 sedyaml 任务执行完成后
-    resources:
-      inputs:
-      - name: repo
-        resource: app-git
-    workspaces:
-    - name: kubectl-deploy-repo
       workspace: godo-repo
