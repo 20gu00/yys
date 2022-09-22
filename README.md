@@ -16,7 +16,8 @@ CI/CD：tekton gitops
 
 
 我的环境：4台各4核8g的ESC  
-![输入图片说明](tools/image10.png)  
+![image](https://user-images.githubusercontent.com/61965693/191806630-8aa15961-3ddc-4b82-81ac-d830d0f17cb2.png)
+
 通过我的公网地址和对应的端口即可访问我对外提供的服务，上面我提到的服务大部分对外开放(后续我考虑将服务端口整理出来供网友公网访问)
 
 个人预计后续优化：  
@@ -37,18 +38,19 @@ CI/CD：tekton gitops
 
 CI/CD:  
 ![输入图片说明](https://foruda.gitee.com/images/1663863643116081908/2a924f51_10984789.png "tekton.png")  
-![输入图片说明](tools/gitlab1.png)  
-![输入图片说明](tools/harbor1.png)  
+![image](https://user-images.githubusercontent.com/61965693/191807118-ecf6aa9f-ddc1-427c-b31d-4144bfe60140.png)  
+![image](https://user-images.githubusercontent.com/61965693/191807233-722bfe7c-c516-4152-a622-78f1b664af41.png)  
 
+ 
 业务逻辑：  
-![输入图片说明](tools/image.png)  
-![输入图片说明](tools/image2.png)  
+![image](https://user-images.githubusercontent.com/61965693/191807922-ad33d60a-8924-490f-a67a-72568308db73.png)
+![image](https://user-images.githubusercontent.com/61965693/191808026-726d486b-c619-4915-9373-4cf65e9acb9c.png)  
 
 相应的service:  
-![输入图片说明](tools/kubernetes-dashboard1.png)  
-![输入图片说明](tools/kubernetes-dashboard2.png)  
+![image](https://user-images.githubusercontent.com/61965693/191807377-6357f70b-331e-4319-ac59-0d4f118be3cf.png)  
+![image](https://user-images.githubusercontent.com/61965693/191807432-2b1ec45d-01a3-43f6-8398-d204e8df1b53.png)  
 
 监控：  
-![输入图片说明](tools/prometheus1.png)  
-![输入图片说明](tools/grafana3.png)  
-![输入图片说明](tools/grafana2.png)  
+![image](https://user-images.githubusercontent.com/61965693/191807510-49b28b66-8a5a-4c5c-a893-857bd4e45e92.png)
+![image](https://user-images.githubusercontent.com/61965693/191807594-1d5010ec-e771-461c-87c6-ac1271d533d8.png)  
+![image](https://user-images.githubusercontent.com/61965693/191807685-1d6f8685-ccbd-4175-9ae9-8733af18080f.png)  
