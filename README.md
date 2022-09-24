@@ -26,7 +26,7 @@ CI/CD：tekton gitops
 3.配置Loki，轻量且高效  
 4.加入gitops,tekton+gitops理念实现更真实的CI/CD。jenking使用kubernetes插件来配置云做cicd(无他，使用用户量在，但我觉得kubernetes用jenkins做cicd有点重)  
 5.缓存相应的代码逻辑进一步设计优化，缓存设计不好并发就是空谈  
-6.数据库换osd，有istio接入，实现更好的高可用，更方便实现如读写分离等操作  
+6.数据库换rsd，有istio接入，实现更好的高可用，更方便实现如读写分离等操作  
 7.监控promenthues+grafana+alertmanager不够轻，采用promentheusOperator或者Thnos  
 
 
