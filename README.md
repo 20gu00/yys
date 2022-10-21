@@ -10,9 +10,9 @@ CI/CD：tekton gitops
 存储：rook-ceph nfs共享卷  
 监控：prometheus+grafana+alertmanager  
 日志：ELK Loki  
-其他：mysql redis kafka ansible等  
+其他：mysql redis ansible等  
 
-整个项目高度容器化，k8s是基石环境，采用go语言go-zero框架编写的微服务架构的应用程序(当然这里单体和微服务之间的转换很平滑,为了更明显突出servicemesh效果我优先考虑了微服务架构)，主题上可分为两大部分，后台管理系统和服务应用，在支付和订单的逻辑处理间为了保证消息数据的正确使用，接入kafka做消息队列，部分延时功能用ansyq做延时队列，运行在istio中，做流量管理负载均衡、安全管控、链路追踪、故障注入、熔断、流量镜像等。应用提供了metrics接口，prometheus拉取metrics数据做监控grafana可视和告警通知等。使用ceph集群和nfs共享卷做存储，为了更优化本地程序的性能，部分程序采用localpv。tekton配合我本地配置的gitlab和harbor做CI/CD  
+整个项目高度容器化，k8s是基石环境，采用go语言go-zero框架编写的微服务架构的应用程序(当然这里单体和微服务之间的转换很平滑,为了更明显突出servicemesh效果我优先考虑了微服务架构)，主题上可分为两大部分，后台管理系统和服务应用，运行在istio中，做流量管理负载均衡、安全管控、链路追踪、故障注入、熔断、流量镜像等。应用提供了metrics接口，prometheus拉取metrics数据做监控grafana可视和告警通知等。使用ceph集群和nfs共享卷做存储，为了更优化本地程序的性能，部分程序采用localpv。tekton配合我本地配置的gitlab和harbor做CI/CD  
 
 
 我的环境：4台各4核8g的ESC  
